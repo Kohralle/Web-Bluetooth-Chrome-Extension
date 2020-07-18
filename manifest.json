@@ -1,0 +1,36 @@
+{
+  "name": "extension",
+  "description" : "Bluetooth Chrome Extension Test",
+  "version": "1.0",
+  "permissions": [
+    "https://mail.google.com/mail/*"
+  ],
+  "icons": {
+    "128": "icon_128.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "Bear",
+    "default_action": "popup.html",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "tabs",
+    "http://localhost:8080/handle/",
+    "http://localhost:8080/getdata/"
+  ],
+  "content_security_policy": " 'unsafe-inline'; object-src 'self'",
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "js": ["content_script.js","machine_learning.js"],
+      "matches": ["https://mail.google.com/mail/*"],
+      "run_at": "document_idle"
+    }
+  ]
+}
