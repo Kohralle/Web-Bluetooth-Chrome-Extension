@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9ef329cd-07c7-49cb-ab0b-1fea30d3c334" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../background.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../content_script.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/content_script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/machine_learning.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/popup.html" beforeDir="false" afterPath="$PROJECT_DIR$/popup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../icon_128.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../machine_learning.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ml.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../popup.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../script.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/mongo.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/server.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1exFThDpCSHD0paSjlKQ71tWWmz" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9ef329cd-07c7-49cb-ab0b-1fea30d3c334" name="Default Changelist" comment="" />
+      <created>1595255346152</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1595255346152</updated>
+      <workItem from="1595255347880" duration="203000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+</project>

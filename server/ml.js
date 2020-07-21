@@ -1,34 +1,19 @@
+//////////////////////////////////////
+var model;
+
+function set_model(m) {
+    model = m;
+}
+
+module.exports.modelle = function () {
+    return model;
+}
+
+const tf =  require('@tensorflow/tfjs');
+//import * as tf from '@tensorflow/tfjs-node'
 function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
-//download(retrieve_database(), 'json.txt', 'text/plain');
-
-var model
-
-function retrieve_database(){
-
-    fetch('/getdata').then(response => {
-        return response.json()
-    })
-        .then(whole_database=>{
-            const result = JSON.parse(whole_database.payload) // returns all database data in json format
-
-
-            assess_model(result)
-            return result
-        })
-
-};
-
-async function download(content, fileName, contentType) {
-    var a = document.createElement("a");
-    var file = new Blob([content], {type: contentType});
-    a.href = URL.createObjectURL(file);
-    a.download = fileName;
-    a.click();
-}
-
-
 
 function getColumn(anArray, columnNumber) {
     return anArray.map(function(row) {
@@ -49,7 +34,7 @@ function normalize(min, max){
 }
 
 
-async function assess_model(data) {
+module.exports.learn = async function (data) {
     let parsed_array = await convert_to_array(data)
 
     //let normalized_array = await normalize_data(parsed_array)
@@ -79,11 +64,12 @@ async function assess_model(data) {
     console.log(wrong)
     console.log(correct)
     model.summary()
-    const saveResult = await model.save('downloads://my-model');
+    //const saveResult = await model.save('downloads://my-model');
 
     console.log(model);
     console.log("SONE");
 }
+//module.exports.assess_model = assess_model();
 
 function convertToTensors(data, targets, testsplit){
     const numExamples = data.length;
@@ -147,6 +133,42 @@ function convertToTensors(data, targets, testsplit){
 
     return [xTrain, newyTrain, xTest, newyTest];
 
+}
+
+async function convert_to_array(db){
+   // console.log(db)
+    console.log("this db dogg")
+    console.log(typeof db);
+
+    let array = db.map(obj => Object.values(obj)); //convert json into an array
+    console.log("Initial Array")
+    console.log(array)
+
+    var target_count = []; //array for storing target values
+    const array_no_id = []; //array for accelerometer values
+    const data_position = array[0].length - 1; //length of a data instance
+
+
+    for (var i = 0; i < array.length; i++) {
+        let data =  array[i].slice(1, data_position) // 1 because we need to omit field of id
+        let target_value = array[i][data_position]
+        target_count.push(target_value)
+        array_no_id[i] = data.concat(target_value)
+    }
+
+    number_of_classes = target_count.filter(onlyUnique).length //filter out the duplicates from an array to get the number of classes
+    var data_length = array_no_id[0].length
+    console.log("Array with no id")
+    console.log(array_no_id)
+    console.log("Array with no id len")
+    console.log(array_no_id.length)
+    console.log(target_count)
+
+    //var normalize = normalize_data(array_no_id)
+    //console.log(normalize)
+
+
+    return array_no_id;
 }
 
 
@@ -254,9 +276,18 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
 
 
 
+
+
+
+
+
+
+
+
+
     model = tf.sequential(); //creating an empty architecture for the model
     const learningRate = .001;// was .01
-    const numberofEpochs = 20; //
+    const numberofEpochs = 1; //
     //https://www.youtube.com/watch?v=EoYfa6mYOG4
     //what we can do here is implement the notion of batch-size to increase the perfomance of training the model
     //check to add this later
@@ -336,11 +367,4 @@ function getmode(array)
         }
     }
     return maxEl;
-}
-
-async function load(){
-    console.log("LOADED")
-    const model = await tf.loadLayersModel('http://localhost:8080/my-model.json');
-    console.log("LOADED")
-
 }

@@ -1,5 +1,7 @@
-const mongo = require('./mongo.js');
-console.log("got it")
+const {MongoClient} = require('mongodb');
+var db_key = "mongodb+srv://thesis:s3eFAEHg9ENMr3Yp@koral-02ofn.mongodb.net/test?retryWrites=true&w=majority"; //special key for accessing my db
+var client = new MongoClient(db_key, { useUnifiedTopology: true, useNewUrlParser: true }); //get instance of client
+
 var express = require('express');  //I am using express for starting the server and utilizing middleware
 var app = express();
 app.listen(8080);
@@ -10,34 +12,60 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(public, 'index.html')); // Fire up my html client side page to view at http://localhost:8080 with get request
 });
 
-
-//app.use('/', express.static(public)); //serve the page statically
-
 app.use(express.json({limit:'1mb'})); //this is for converting the put request into a json file, the filter doesnt have any use
 
 
 //This is simple function for seeing all the databases in my MongoDB account
+async function listDatabases(){
+    databasesList = await client.db().admin().listDatabases(); // you can look up everything in the obkject
 
+    console.log("Databases:");
+    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+};
 
+//Listing all the collections in a particular DB
+async function listCollections(){
 
+    const db = client.db("test1");
+    const test = db.collection('test1');
 
+    //const collections = await db.collections();
+    //collections.forEach(c=>console.log(c.collectionName));
+    console.log("Cursor searching");
+    const searchCursor = await test.find()
+    const result = await searchCursor.toArray()
+    console.log(result)
+}
 
+//Function made when trying to put something into the DB
+async function inserting(value){
+    const db = client.db("test1");
+    const test = db.collection('test1');
+    var now = new Date()
+
+//making an example object to put into the db
+    const insertCursor = await test.insertOne(
+        {
+            Name: "Karol",
+            Time: now.getHours() + ':' + now.getMinutes() +':' + now.getSeconds(),
+            Temperature: value
+        }
+    )
+}
 
 //function called when the local server starts up to initiate the connectien with the database
 async function main(){
 
     try {
         // Connect to the MongoDB cluster
-        //mongo.mongo_init();
 
-        await mongo.mongo_init;
-        console.log("Connected!");
-        await mongo.listDatabases;
-        //await inserting();
-        await mongo.listCollections;
+        await client.connect();
+
+        await listDatabases();
+
+        await listCollections();
     } catch (e) {
         console.error(e);
-        //console.log('yo');
     } finally {
         //await client.close(); //Need to read up on connecting and closing the database, because I am not sure if finally should be here
     }
@@ -45,7 +73,26 @@ async function main(){
 
 //main().catch(console.error);
 
+async function send_to_database (value){
+    console.log(value.x +"from send to db");
 
+    const db = client.db("test1");
+    const test = db.collection('test1');
+
+    const insertCursor = await test.insertOne(
+        {
+            //time: value.time,
+            x_axis: value.x,
+            y_axis: value.y,
+            z_axis: value.z,
+            //w_axis: value.w,
+            target: value.t
+            //Name: "KArol"
+        }
+    )
+
+    return insertCursor;
+}
 
 app.post('/handle', async function (request, response) {
 
@@ -68,18 +115,36 @@ app.post('/handle', async function (request, response) {
     });
 });
 
-app.get('/getdata', async function (request, response) {
-    //we have to give him the database array
-    const db = client.db("test1");
-    const test = db.collection('test1');
+var ml = require('./ml.js');
+var predict = require('./predict.js')
 
-    //const collections = await db.collections();
-    //collections.forEach(c=>console.log(c.collectionName));
+app.post('/predict', async function (request, response) {
+    console.log(request.body);
+    let state = predict.predict(request.body);
+    response.json({
+        status: "success",
+        result: state
+    });
+});
+
+app.get('/getdata', async function (request, response) {
+    console.log("GOT THE REQUEST");
+    const db = client.db("test_subjects");
+    const test = db.collection('teresa');
+
+
     console.log("Cursor searching");
     const searchCursor = await test.find()
     const result = await searchCursor.toArray()
-    //console.log(result[0]);
+    console.log(typeof result)
+    console.log("THIS DA RESULT")
+    //console.log(result)
+    console.log("YO GURT")
+    console.log(Object.values(result));
+    console.log(typeof Object.values(result));
     const haha = JSON.stringify(result)
+    console.log(typeof haha)
+    ml.learn(result);
 
     var fs = require('fs');
     fs.writeFile("test.txt", haha, function(err) {
@@ -87,19 +152,14 @@ app.get('/getdata', async function (request, response) {
         console.log(err);
     }
 });
-    console.log(haha);
+    //console.log(haha);
     response.json({
         status: "success",
         payload: haha
     })
-    //console.log(response);
-    //response.send();
+
 });
 
-//middleware testing
-/*
-app.get('/test', (req, res) => {
-    res.send('We are on homeee');
-    console.log("req.body")
-});
-*/
+
+
+

@@ -24,11 +24,11 @@
     "http://localhost:8080/handle/",
     "http://localhost:8080/getdata/"
   ],
-  "content_security_policy": " 'unsafe-inline'; object-src 'self'",
+  
   "content_scripts": [
     {
       "all_frames": true,
-      "js": ["content_script.js","machine_learning.js"],
+      "js": ["content_script.js", "predict.js"],
       "matches": ["https://mail.google.com/mail/*"],
       "run_at": "document_idle"
     }

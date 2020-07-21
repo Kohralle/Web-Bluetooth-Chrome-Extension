@@ -11,10 +11,32 @@ chrome.runtime.onMessage.addListener(
         }
         else if(request.message === "train"){
             retrieve_database();
+            console.log("YOOOOO")
+        }
+        else if(request.message === "predict"){
+            console.log("YOOOOO");
+            start_notifications_for_ml();
+            //start_notifications_for_ml();
+
         }
 
     }
 );
+
+function retrieve_database(){
+
+    fetch('http://localhost:8080/getdata').then(response => {
+        return response.json()
+    })
+        .then(whole_database=>{
+            const result = JSON.parse(whole_database.payload) // returns all database data in json format
+
+            console.log(result);
+            // assess_model(result)
+            return result
+        })
+
+};
 
 var configuration_uuid = 'ef680100-9b35-4933-9b10-52ffa9740042'
 var service_uuid = 'ef680400-9b35-4933-9b10-52ffa9740042'
@@ -38,9 +60,11 @@ function get_device_object() {
     if (availability() === true){ //check if browser supports Web Bluetooth
 
         let attributes = {
+            //acceptAllDevices: true,
             filters: [{
-                services: [configuration_uuid]
-            }]
+                services: [service_uuid]
+           }]
+            //optionalServices: []
         }
 
         console.log('Requesting Device Object');
@@ -152,3 +176,4 @@ function send_request(value){
     })
     //.then(token => { console.log(token } )
 };
+
