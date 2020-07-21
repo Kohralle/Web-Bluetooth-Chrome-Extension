@@ -32,7 +32,7 @@ function write_temperature_for_ml(event) {
     if (counter < 15) {
         const quaternion_array = Object.values(quaternion)
         prediction_array.push(quaternion_array)
-        console.log(prediction_array)
+        //console.log(prediction_array)
         counter = counter + 1;
     }
 
@@ -51,6 +51,8 @@ function write_temperature_for_ml(event) {
         //console.log(JSON.stringify(value));
         fetch('http://localhost:8080/predict', options).then(response=>{
             send_to_popup(response.state)
+            console.log("Got prediction")
+            console.log(response)
             prediction_array = []
             counter = 0;
         })

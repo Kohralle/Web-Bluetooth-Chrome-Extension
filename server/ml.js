@@ -1,5 +1,5 @@
 //////////////////////////////////////
-var model;
+global.model;
 
 function set_model(m) {
     model = m;
@@ -368,3 +368,4 @@ function getmode(array)
     }
     return maxEl;
 }
+

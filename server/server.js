@@ -120,7 +120,8 @@ var predict = require('./predict.js')
 
 app.post('/predict', async function (request, response) {
     console.log(request.body);
-    let state = predict.predict(request.body);
+    let state = await predict.prediction(request.body, ml.modelle);
+    console.log(state);
     response.json({
         status: "success",
         result: state
@@ -130,7 +131,7 @@ app.post('/predict', async function (request, response) {
 app.get('/getdata', async function (request, response) {
     console.log("GOT THE REQUEST");
     const db = client.db("test_subjects");
-    const test = db.collection('teresa');
+    const test = db.collection('pawel');
 
 
     console.log("Cursor searching");
