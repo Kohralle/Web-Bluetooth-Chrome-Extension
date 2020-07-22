@@ -1,0 +1,110 @@
+body {
+    min-width: 350px;
+    min-height: 370px;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    position: relative;
+    vertical-align:middle;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center;
+
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+
+}
+
+.navbar a {
+    /*float: right;
+
+    display: block;*/
+    display: inline-block;
+    list-style-type: none;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 15px 41px;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.navbar a:hover {
+    background: #f1f1f1;
+    color: black;
+}
+
+.navbar a.active {
+     background-color: #4CAF50;
+      color: white;
+}
+
+.main {
+    padding: 16px;
+    margin-bottom: 30px;
+}
+#connect {
+    position:absolute; top:60px; background-color:yellow;
+}
+button {
+    position: absolute;
+    display: block;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: none;
+    color: #ccc;
+    width: 240px;
+    height: 80px;
+    border: 1px solid #338033;
+    font-size: 18px;
+    border-radius: 4px;
+    transition: 0.6s;
+    overflow: hidden;
+}
+button:focus {
+    outline: none;
+}
+button:before {
+    content: "";
+    display: block;
+    position: absolute;
+    background: rgba(255, 255, 255, 0.5);
+    width: 60px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    opacity: 0.5;
+    filter: blur(30px);
+    transform: translateX(-130px) skewX(-15deg);
+}
+button:after {
+    content: "";
+    display: block;
+    position: absolute;
+    background: rgba(255, 255, 255, 0.2);
+    width: 30px;
+    height: 100%;
+    left: 30px;
+    top: 0;
+    opacity: 0;
+    filter: blur(30px);
+    transform: translate(-100px) scaleX(-15deg);
+}
+button:hover {
+    background: #338033;
+    cursor: pointer;
+}
+button:hover:before {
+    transform: translateX(300px) skewX(-15deg);
+    opacity: 0.6;
+    transition: 0.7s;
+}
+button:hover:after {
+    transform: translateX(300px) skewX(-15deg);
+    opacity: 1;
+    transition: 0.7s;
+}

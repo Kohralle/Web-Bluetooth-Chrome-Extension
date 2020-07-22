@@ -124,7 +124,7 @@ app.post('/predict', async function (request, response) {
     console.log(state);
     response.json({
         status: "success",
-        result: state
+        result: JSON.stringify(state)
     });
 });
 
