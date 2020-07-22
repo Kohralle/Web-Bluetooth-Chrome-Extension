@@ -50,9 +50,10 @@ function write_temperature_for_ml(event) {
         };
         //console.log(JSON.stringify(value));
         fetch('http://localhost:8080/predict', options).then(response=>{
-            send_to_popup(response.state)
+            send_to_popup(response.result)
             console.log("Got prediction")
-            console.log(response)
+            //let loggg = await JSON.parse(response)
+            //console.log(loggg)
             prediction_array = []
             counter = 0;
         })

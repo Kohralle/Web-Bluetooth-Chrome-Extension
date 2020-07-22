@@ -123,8 +123,8 @@ app.post('/predict', async function (request, response) {
     let state = await predict.prediction(request.body, ml.modelle);
     console.log(state);
     response.json({
-        status: "success",
-        result: JSON.stringify(state)
+        //status: "success",
+        result: state
     });
 });
 
