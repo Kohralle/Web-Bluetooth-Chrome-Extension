@@ -1,13 +1,21 @@
-function predict() {
+function start_prediction() {
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         var activeTab = tabs[0];
         chrome.tabs.sendMessage(activeTab.id, {"message": "predict"});
     });
 }
 
+function stop_prediction() {
+    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
+        var activeTab = tabs[0];
+        chrome.tabs.sendMessage(activeTab.id, {"message": "stop"});
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function() {
 
-    document.getElementById("predict").addEventListener("click", predict);
+    document.getElementById("predict").addEventListener("click", start_prediction);
+    document.getElementById("stop_predict").addEventListener("click", stop_prediction);
 });
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -24,12 +32,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         document.getElementById("prediction").innerHTML = "Standing";
     }
 
-    //document.getElementById("p1").innerHTML = message.quaternion.x;
-    //document.getElementById("p2").innerHTML = message.quaternion.y;
-    //document.getElementById("p3").innerHTML = message.quaternion.z;
-
     sendResponse({
-        data: "I am fine, thank you. How is life in the background?"
+        data: "success!"
     });
 });
 

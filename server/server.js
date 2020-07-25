@@ -159,6 +159,14 @@ app.get('/getdata', async function (request, response) {
 
 });
 
+app.get('/learning_progress', async function (request, response) {
+    console.log(request.body);
+    let state = await predict.prediction(request.body, ml.modelle);
+    console.log(state);
+    response.send(JSON.stringify(state));
+});
+
+
 
 
 
