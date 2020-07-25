@@ -1,3 +1,4 @@
+var isConnected = false;
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if( request.message === "connect" ) {
@@ -20,6 +21,26 @@ chrome.runtime.onMessage.addListener(
 
         }
 
+        else if(request.message === "disconnect"){
+            console.log("YOOOOO");
+            onDisconnectButtonClick();
+            //start_notifications_for_ml();
+
+
+        }
+
+
+        else if(request.message === "inquiry") {
+            console.log("YOOOOO");
+
+            console.log("YOOOOO");
+            chrome.runtime.sendMessage({
+                isConnected
+            }, function (response) {
+                console.dir(response);
+            });
+        }
+
     }
 );
 
@@ -39,9 +60,11 @@ function retrieve_database(){
 };
 
 var configuration_uuid = 'ef680100-9b35-4933-9b10-52ffa9740042'
+
 var service_uuid = 'ef680400-9b35-4933-9b10-52ffa9740042'
 var characteristic_uuid = 'ef680406-9b35-4933-9b10-52ffa9740042'
 var characteristic_object;
+var bluetoothDevice;
 
 function availability(){
     if (!navigator.bluetooth) {
@@ -55,6 +78,8 @@ function availability(){
     }
 }
 
+
+
 function get_device_object() {
 
     if (availability() === true){ //check if browser supports Web Bluetooth
@@ -62,16 +87,28 @@ function get_device_object() {
         let attributes = {
             //acceptAllDevices: true,
             filters: [{
-                services: [service_uuid]
-           }]
-            //optionalServices: []
+                services: [configuration_uuid]
+           }],
+            optionalServices: [service_uuid]
         }
 
         console.log('Requesting Device Object');
+
         navigator.bluetooth.requestDevice(attributes)
             .then(thingy => { //returns a promise to an object, which we further resolve to get subsequent data
+                bluetoothDevice = thingy
+
+                let message = 'Requesting Device Object...'
+                chrome.runtime.sendMessage({
+                    message
+                }, function (response) {
+                    console.dir(response);
+                });
+
                 establish_connection(thingy)
                 console.log('Sending GATT request');
+
+
             })
             .catch(error => {
                 console.log(error);
@@ -87,17 +124,45 @@ function establish_connection(thingy) {
     thingy.gatt.connect()
         .then(server => { // (with arrow functions () => x is short for () => { return x; }).
             console.log('Getting Service');
+            let message = 'Getting Service...';
+            chrome.runtime.sendMessage({
+                message
+            }, function (response) {
+                console.dir(response);
+            });
             return server.getPrimaryService(service_uuid);
         })
         .then(service => {
             console.log('Getting Characteristic');
+            let message = 'Getting Characteristic...';
+            chrome.runtime.sendMessage({
+                message
+            }, function (response) {
+                console.dir(response);
+            });
             return service.getCharacteristic(characteristic_uuid);
         })
         .then(characteristic => {
-            console.log(characteristic.readValue());
+            //console.log(characteristic.readValue());
             //characteristic.addEventListener('characteristicvaluechanged', write_temperature);
             characteristic_object = characteristic
-            //start_reading(characteristic)
+
+            isConnected = true;
+
+            chrome.runtime.sendMessage({
+               isConnected
+            }, function (response) {
+                console.dir(response);
+            });
+
+            let message = "Connected!"
+
+            chrome.runtime.sendMessage({
+                message
+            }, function (response) {
+                console.dir(response);
+            });
+
         }).catch(error => {
         console.log(error);
     });
@@ -176,4 +241,36 @@ function send_request(value){
     })
     //.then(token => { console.log(token } )
 };
+
+
+
+function onDisconnectButtonClick() {
+    console.log('Disconnecting from Bluetooth Device...');
+    let message = 'Disconnecting from Bluetooth Device...';
+    chrome.runtime.sendMessage({
+        message
+    }, function (response) {
+        console.dir(response);
+    });
+    if (bluetoothDevice.gatt.connected) {
+        bluetoothDevice.gatt.disconnect();
+        isConnected = false
+
+        chrome.runtime.sendMessage({
+            isConnected
+        }, function (response) {
+            console.dir(response);
+        });
+
+        let message = "Disconnected"
+        chrome.runtime.sendMessage({
+            message
+        }, function (response) {
+            console.dir(response);
+        });
+
+    } else {
+        log('> Bluetooth Device is already disconnected');
+    }
+}
 

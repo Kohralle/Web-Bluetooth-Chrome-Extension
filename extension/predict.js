@@ -49,15 +49,20 @@ function write_temperature_for_ml(event) {
             body: JSON.stringify(prediction_array)
         };
         //console.log(JSON.stringify(value));
+        /*
         fetch('http://localhost:8080/predict', options).then(response=>{
+            let data = await response.json();
+            console.log(data)
             send_to_popup(response.result)
             console.log("Got prediction")
             //let loggg = await JSON.parse(response)
-            //console.log(loggg)
+            console.log(response)
             prediction_array = []
             counter = 0;
         })
+    */
 
+        fetch('http://localhost:8080/predict', options).then(response => response.json()).then(data => send_to_popup(data));
         //throw new Error("Something went badly wrong!");
     }
 

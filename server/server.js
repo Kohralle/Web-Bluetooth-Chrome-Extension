@@ -94,6 +94,7 @@ async function send_to_database (value){
     return insertCursor;
 }
 
+var array = []
 app.post('/handle', async function (request, response) {
 
     //console.log(request.body.value);
@@ -122,10 +123,7 @@ app.post('/predict', async function (request, response) {
     console.log(request.body);
     let state = await predict.prediction(request.body, ml.modelle);
     console.log(state);
-    response.json({
-        //status: "success",
-        result: state
-    });
+    response.send(JSON.stringify(state));
 });
 
 app.get('/getdata', async function (request, response) {

@@ -44,10 +44,11 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    document.getElementById("p1").innerHTML = message.prediction;
-    //document.getElementById("p1").innerHTML = message.quaternion.x;
-    //document.getElementById("p2").innerHTML = message.quaternion.y;
-    //document.getElementById("p3").innerHTML = message.quaternion.z;
+
+    //document.getElementById("p1").innerHTML = message.quarterion.x;
+    document.getElementById("x").innerHTML = message.quaternion.x;
+    document.getElementById("y").innerHTML = message.quaternion.y;
+    document.getElementById("z").innerHTML = message.quaternion.z;
 
     sendResponse({
         data: "I am fine, thank you. How is life in the background?"

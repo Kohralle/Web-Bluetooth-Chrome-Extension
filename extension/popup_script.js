@@ -1,56 +1,99 @@
-console.log("I RUN")
-function init_connect() {
+inquireForButton();
+
+function connect() {
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         var activeTab = tabs[0];
         chrome.tabs.sendMessage(activeTab.id, {"message": "connect"});
+    });
+}
+
+function disconnect(){
+    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
+        var activeTab = tabs[0];
+        chrome.tabs.sendMessage(activeTab.id, {"message": "disconnect"});
+
+    });
+}
+
+
+
+function inquireForButton(){
+    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
+        var activeTab = tabs[0];
+        chrome.tabs.sendMessage(activeTab.id, {"message": "inquiry"});
         console.log("CLICKEDDD")
     });
 }
-/*
-function read() {
-    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-        var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "read"});
-    });
-}
 
-function stop() {
-    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-        var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "stop"});
-    });
-}
-
-function train() {
-    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-        var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "train"});
-    });
-}
-
-function predict() {
-    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-        var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "predict"});
-    });
-}
-*/
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("connect").addEventListener("click", init_connect);
-    //document.getElementById("emit_values").addEventListener("click", read);
-    //document.getElementById("stop_values").addEventListener("click", stop);
-    //document.getElementById("train").addEventListener("click", train);
-    //document.getElementById("predict").addEventListener("click", predict);
-});
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    document.getElementById("p1").innerHTML = message.prediction;
-    //document.getElementById("p1").innerHTML = message.quaternion.x;
-    //document.getElementById("p2").innerHTML = message.quaternion.y;
-    //document.getElementById("p3").innerHTML = message.quaternion.z;
+    console.log(message)
+
+    if(message.message == 'Connected!' || message.message == 'Disconnected'
+        || message.message == 'Getting Characteristic...' || message.message == 'Getting Service...'
+        || message.message == 'Disconnecting from Bluetooth Device...' || message.message == 'Requesting Device Object...'){
+        document.getElementById("connected").innerHTML = message.message;
+
+    }
+
+    else if(message.isConnected == false){
+
+        if (document.getElementById('connect') == null) {
+            createConnectButton();
+            document.getElementById("connected").innerHTML = "Click the button below to connect";
+
+            if(document.getElementById('disconnect') != null){
+                const elem = document.getElementById('disconnect');
+                elem.parentNode.removeChild(elem);
+            }
+        }
+
+    }
+
+    else if(message.isConnected == true){
+
+        if(document.getElementById('disconnect') == null){
+            createDisconnectButton();
+            document.getElementById("connected").innerHTML = "Connected";
+        }
+
+        if (document.getElementById('connect') != null){
+            const elem = document.getElementById('connect');
+            elem.parentNode.removeChild(elem);
+        }
+    }
 
     sendResponse({
-        data: "I am fine, thank you. How is life in the background?"
+        data: "Success!"
     });
 });
+
+
+function createDisconnectButton() {
+    //document.getElementById("connected").innerHTML = "Connected!";
+    var button = document.createElement("button");
+    button.innerHTML = "Disconnect";
+    button.id = "disconnect";
+
+    var body = document.getElementsByTagName("body")[0];
+    body.appendChild(button);
+
+    button.addEventListener ("click", function() {
+        disconnect();
+    });
+}
+
+function createConnectButton() {
+    //document.getElementById("connected").innerHTML = "Connected!";
+    var button = document.createElement("button");
+    button.innerHTML = "Connect";
+    button.id = "connect";
+
+    var body = document.getElementsByTagName("body")[0];
+    body.appendChild(button);
+
+    button.addEventListener ("click", function() {
+        connect();
+    });
+}
 
