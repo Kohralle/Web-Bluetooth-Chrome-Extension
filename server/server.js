@@ -7,6 +7,9 @@ var app = express();
 app.listen(8080);
 main();
 
+var ml = require('./ml.js');
+
+
 
 app.get('/', function(req, res) {
     res.sendFile(path.join(public, 'index.html')); // Fire up my html client side page to view at http://localhost:8080 with get request
@@ -86,7 +89,7 @@ async function send_to_database (value){
             y_axis: value.y,
             z_axis: value.z,
             //w_axis: value.w,
-            target: value.t
+            target: state
             //Name: "KArol"
         }
     )
@@ -160,10 +163,22 @@ app.get('/getdata', async function (request, response) {
 });
 
 app.get('/learning_progress', async function (request, response) {
-    console.log(request.body);
-    let state = await predict.prediction(request.body, ml.modelle);
-    console.log(state);
-    response.send(JSON.stringify(state));
+    let finished = false
+
+    if(global.training_finished == true){
+        finished = true
+    }
+
+
+    response.send(finished);
+});
+var state = 0;
+app.post('/set_state', async function (request, response) {
+    console.log(request.body.state)
+    state = request.body.state
+
+
+    response.send("YUH");
 });
 
 

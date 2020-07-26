@@ -1,12 +1,19 @@
 //////////////////////////////////////
 global.model;
+global.training_finished =  false;
+
+global.send_epoch
+global.send_loss
+var express = require('express');  //I am using express for starting the server and utilizing middleware
+var app = express();
 
 function set_model(m) {
     model = m;
 }
 
-module.exports.modelle = function () {
-    return model;
+module.exports.loss_function = function (data) {
+    let object = {epoch: send_epoch, loss: send_loss}
+    return object;
 }
 
 const tf =  require('@tensorflow/tfjs');
@@ -35,6 +42,7 @@ function normalize(min, max){
 
 
 module.exports.learn = async function (data) {
+    training_finished = false;
     let parsed_array = await convert_to_array(data)
 
     //let normalized_array = await normalize_data(parsed_array)
@@ -334,7 +342,8 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
         callbacks: {
             onEpochEnd: async (epoch, logs) => {
                 console.log("Epoch: " + epoch + " Logs:" + logs.loss);
-
+                send_epoch = epoch;
+                send_loss = logs.loss;
                 await tf.nextFrame(); //research this
             },
         }
@@ -343,7 +352,7 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
 
 //fit is used to train the model with data examples against their target values
     const history = await model.fit(xTrain, yTrain, options); //trains a model for a fixed number of epochs
-
+    training_finished = true;
     return model
 
 }

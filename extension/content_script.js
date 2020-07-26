@@ -1,4 +1,15 @@
 var isConnected = false;
+var interval;
+var collect_state;
+
+function send_to_popup(message){
+    chrome.runtime.sendMessage({
+        message
+    }, function (response) {
+        console.dir(response);
+    });
+}
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if( request.message === "connect" ) {
@@ -12,7 +23,7 @@ chrome.runtime.onMessage.addListener(
         }
         else if(request.message === "train"){
             retrieve_database();
-            console.log("YOOOOO")
+            interval = setInterval(check_training_status, 1000);
         }
         else if(request.message === "predict"){
             console.log("YOOOOO");
@@ -25,24 +36,82 @@ chrome.runtime.onMessage.addListener(
             console.log("YOOOOO");
             onDisconnectButtonClick();
             //start_notifications_for_ml();
+        }
 
+        else if(request.message === "sitting"){
+            collect_state = "Sitting"
+            fetch_state(0)
 
         }
 
+        else if(request.message === "walking"){
+            collect_state = "Walking"
+            fetch_state(1)
+        }
+
+        else if(request.message === "standing"){
+            collect_state = "Standing"
+            fetch_state(2)
+        }
 
         else if(request.message === "inquiry") {
             console.log("YOOOOO");
 
             console.log("YOOOOO");
-            chrome.runtime.sendMessage({
-                isConnected
-            }, function (response) {
-                console.dir(response);
-            });
+            send_to_popup(isConnected)
+        }
+
+        else if(request.message == "collect_state_inquiry"){
+            send_to_popup(collect_state)
+
         }
 
     }
 );
+
+function fetch_state(data) {
+    let message = {state: data}
+    const options = {
+        method: 'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify(message)
+    };
+    //console.log(JSON.stringify(value));
+    fetch('http://localhost:8080/set_state', options).then(response=>{
+        //console.log(response)
+        //var out = response.json()
+    })
+    //.then(token => { console.log(token } )
+}
+
+function assess_interval(data){
+    console.log(typeof data)
+    if(data == false){
+        send_to_popup("Training in progress...")
+
+        console.log(data)
+    }
+    else if(data == true){
+        console.log("Training dun")
+        send_to_popup("Training Completed")
+
+        clearInterval(interval);
+    }
+}
+
+function check_training_status() {
+    setTimeout(function(){ console.log("Hello"); }, 3000);
+    fetch('http://localhost:8080/learning_progress',{
+        headers : {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+
+    }).then(response => response.json())
+        .then(data => assess_interval(data));
+}
 
 function retrieve_database(){
 
@@ -56,6 +125,10 @@ function retrieve_database(){
             // assess_model(result)
             return result
         })
+
+    //response.send(JSON.stringify(state));
+
+
 
 };
 
@@ -234,12 +307,11 @@ function send_request(value){
         },
         body: JSON.stringify(data)
     };
-    //console.log(JSON.stringify(value));
+
     fetch('http://localhost:8080/handle', options).then(response=>{
-        //console.log(response)
-        //var out = response.json()
+
     })
-    //.then(token => { console.log(token } )
+
 };
 
 

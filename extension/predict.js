@@ -11,7 +11,7 @@ function start_notifications_for_ml() {
         .catch(error => {
             console.log('[ERROR] Start: ' + error)
         })
-        console.log("YO THIS SHIT BUSSIN");
+        
     return write_temperature_for_ml
 }
 
@@ -48,19 +48,7 @@ function write_temperature_for_ml(event) {
             },
             body: JSON.stringify(prediction_array)
         };
-        //console.log(JSON.stringify(value));
-        /*
-        fetch('http://localhost:8080/predict', options).then(response=>{
-            let data = await response.json();
-            console.log(data)
-            send_to_popup(response.result)
-            console.log("Got prediction")
-            //let loggg = await JSON.parse(response)
-            console.log(response)
-            prediction_array = []
-            counter = 0;
-        })
-    */
+
 
         fetch('http://localhost:8080/predict', options).then(response => response.json()).then(data => send_to_popup(data));
         //throw new Error("Something went badly wrong!");
@@ -74,18 +62,5 @@ function write_temperature_for_ml(event) {
         });
     }
 
-    //console.log("shit works");
-    //console.log(quaternion);
 
-
-
-    /*
-    const input_ml = tf.tensor2d(quaternion_array, [1, 3]);
-    const prediction_ml = model.predict(input_ml);
-    console.log("Prediction: " + prediction_ml);
-    const hahaha = prediction_ml.argMax(-1).dataSync()
-    console.log(hahaha);
-    console.log(hahaha[0]);
-    document.getElementById("p1").innerHTML = hahaha[0];
-    */
 }

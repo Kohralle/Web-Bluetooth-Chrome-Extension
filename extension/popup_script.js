@@ -36,7 +36,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     }
 
-    else if(message.isConnected == false){
+    else if(message.message == false){
 
         if (document.getElementById('connect') == null) {
             createConnectButton();
@@ -50,7 +50,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     }
 
-    else if(message.isConnected == true){
+    else if(message.message == true){
 
         if(document.getElementById('disconnect') == null){
             createDisconnectButton();

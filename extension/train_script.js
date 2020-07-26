@@ -17,13 +17,13 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    document.getElementById("p1").innerHTML = message.prediction;
-    //document.getElementById("p1").innerHTML = message.quaternion.x;
-    //document.getElementById("p2").innerHTML = message.quaternion.y;
-    //document.getElementById("p3").innerHTML = message.quaternion.z;
+    if(message.message == "Training in progress..." || message.message == "Training Completed"){
+        document.getElementById("train_status").innerHTML = message.message;
+    }
+
 
     sendResponse({
-        data: "I am fine, thank you. How is life in the background?"
+        data: "Success!"
     });
 });
 
