@@ -37,8 +37,9 @@ async function listCollections(){
     console.log("Cursor searching");
     const searchCursor = await test.find()
     const result = await searchCursor.toArray()
-    return result
     console.log(result)
+    return result
+
 }
 
 //Function made when trying to put something into the DB
@@ -65,8 +66,6 @@ const test = db.collection('test1');
 // Delete All documents from collection Using blank BasicDBObject
 test.deleteMany({});
 //test.remove({})
-
-
 }
 
 
@@ -82,7 +81,7 @@ async function main(){
 
         await listCollections();
 
-        await clear_database();
+        //await clear_database();
     } catch (e) {
         console.error(e);
     } finally {
@@ -192,9 +191,20 @@ var state = 0;
 app.post('/set_state', async function (request, response) {
     console.log(request.body.state)
     state = request.body.state
-
-
     response.send("YUH");
+});
+
+app.get('/pull_database', async function (request, response) {
+    let message = await listCollections();
+    response.send(message);
+});
+
+app.get('/reset_database', async function (request, response) {
+    console.log("Got request")
+    await clear_database();
+    console.log("NOTHA")
+    let message = {reset: true}
+    response.send(true);
 });
 
 

@@ -1,6 +1,7 @@
 var isConnected = false;
-var interval;
+var training_status_interval;
 var collect_state;
+var pull_database_interval;
 
 function send_to_popup(message){
     chrome.runtime.sendMessage({
@@ -23,13 +24,12 @@ chrome.runtime.onMessage.addListener(
         }
         else if(request.message === "train"){
             retrieve_database();
-            interval = setInterval(check_training_status, 1000);
+            training_status_interval = setInterval(check_training_status, 1000);
         }
         else if(request.message === "predict"){
             console.log("YOOOOO");
             start_notifications_for_ml();
             //start_notifications_for_ml();
-
         }
 
         else if(request.message === "disconnect"){
@@ -41,7 +41,6 @@ chrome.runtime.onMessage.addListener(
         else if(request.message === "sitting"){
             collect_state = "Sitting"
             fetch_state(0)
-
         }
 
         else if(request.message === "walking"){
@@ -66,8 +65,43 @@ chrome.runtime.onMessage.addListener(
 
         }
 
+        else if(request.message == "get_database"){
+            pull_database_interval = setInterval(get_db, 1000);
+
+        }
+
+        else if(request.message == "reset_database"){
+            fetch('http://localhost:8080/reset_database').then(response => response.json())
+                .then(data => {
+                    if(data === true){
+                        send_to_popup("database reset")
+                    }
+
+                    }
+                );
+        }
+
     }
 );
+
+function get_db(){
+    fetch('http://localhost:8080/pull_database',{
+        headers : {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+
+    }).then(response => response.json())
+        .then(data => {
+            if(Array.isArray(data)){
+                clearInterval(pull_database_interval);
+                let message = {message: "data", database: data}
+                console.log(data)
+                send_to_popup(message);
+            }
+
+        });
+}
 
 function fetch_state(data) {
     let message = {state: data}
@@ -97,7 +131,7 @@ function assess_interval(data){
         console.log("Training dun")
         send_to_popup("Training Completed")
 
-        clearInterval(interval);
+        clearInterval(training_status_interval);
     }
 }
 
