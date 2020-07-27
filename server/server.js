@@ -56,6 +56,19 @@ async function inserting(value){
     )
 }
 
+async function clear_database(){
+const db = client.db("test1");
+const test = db.collection('test1');
+
+
+// Delete All documents from collection Using blank BasicDBObject
+test.deleteMany({});
+//test.remove({})
+
+
+}
+
+
 //function called when the local server starts up to initiate the connectien with the database
 async function main(){
 
@@ -67,6 +80,8 @@ async function main(){
         await listDatabases();
 
         await listCollections();
+
+        await clear_database();
     } catch (e) {
         console.error(e);
     } finally {
