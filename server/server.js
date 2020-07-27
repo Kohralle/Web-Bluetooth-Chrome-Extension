@@ -37,6 +37,7 @@ async function listCollections(){
     console.log("Cursor searching");
     const searchCursor = await test.find()
     const result = await searchCursor.toArray()
+    return result
     console.log(result)
 }
 
