@@ -1,0 +1,13 @@
+#collect_alert {
+    position: absolute;
+    text-align: center;
+    left: 70%;
+    bottom: 58%;
+    transform: translateX(-50%) translateY(-50%);
+    vertical-align: middle;
+    font-size: small;
+    color: #cccccc;
+    height: 20px;
+    width: 200px;
+
+}

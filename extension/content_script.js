@@ -1,7 +1,7 @@
-var isConnected = false;
-var training_status_interval;
+let isConnected = false;
+let training_status_interval;
+let pull_database_interval;
 var collect_state;
-var pull_database_interval;
 
 function send_to_popup(message){
     chrome.runtime.sendMessage({
@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener(
         }
 
         else if(request.message === "disconnect"){
-            onDisconnectButtonClick();
+            onDisconnectButtonClick(); //establish_connection.js
         }
 
         else if(request.message === "connection_state_inquiry") {
@@ -36,16 +36,19 @@ chrome.runtime.onMessage.addListener(
         else if(request.message === "sitting"){
             collect_state = "Sitting"
             fetch_state(0)
+            console.log(collect_state);
         }
 
         else if(request.message === "walking"){
             collect_state = "Walking"
             fetch_state(1)
+            console.log(collect_state);
         }
 
         else if(request.message === "standing"){
             collect_state = "Standing"
             fetch_state(2)
+            console.log(collect_state);
         }
 
         else if(request.message == "collect_state_inquiry"){
@@ -165,19 +168,26 @@ function retrieve_database(){
 
 };
 
-
-
 function start_notifications() {
-    characteristic_object.addEventListener('characteristicvaluechanged', write_temperature);
-    characteristic_object.startNotifications()
-        .then(_ => {
-            console.log('Start reading...')
-            //document.querySelector('#start').disabled = true
-            //document.querySelector('#stop').disabled = false
-        })
-        .catch(error => {
-            console.log('[ERROR] Start: ' + error)
-        })
+    if(collect_state === "Sitting"|| collect_state === "Walking"|| collect_state ==="Standing"){
+
+        characteristic_object.addEventListener('characteristicvaluechanged', write_temperature);
+        characteristic_object.startNotifications()
+            .then(_ => {
+                console.log('Start reading...')
+                send_to_popup("disable start button")
+            })
+            .catch(error => {
+                console.log('[ERROR] Start: ' + error)
+            })
+    }
+
+    else {
+        console.log(collect_state);
+        send_to_popup("Choose a state first!")
+
+    }
+
 }
 
 function write_temperature(event) {
@@ -205,7 +215,6 @@ function write_temperature(event) {
 
     console.log(quaternion);
 
-    //let value = event.target.value.getInt8(0)
     send_request(quaternion)
 
 }
@@ -215,8 +224,7 @@ function stop_notifications() {
     characteristic_object.stopNotifications()
         .then(_ => {
             console.log('Stop reading...')
-            //document.querySelector('#start').disabled = false
-            //document.querySelector('#stop').disabled = true
+            send_to_popup("disable stop button")
         })
         .catch(error => {
             console.log('[ERROR] Stop: ' + error)
