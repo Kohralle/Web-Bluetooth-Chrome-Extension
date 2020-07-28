@@ -94,7 +94,7 @@ function get_db(){
         .then(data => {
             if(Array.isArray(data)){
                 clearInterval(pull_database_interval);
-                let message = {message: "data", database: data}
+                let message = {message: "database", database: data}
                 console.log(data)
                 send_to_popup(message);
             }

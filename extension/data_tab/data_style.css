@@ -1,4 +1,4 @@
-.zui-table {
+.data_table {
     border: solid 1px #338033;
     border-collapse: collapse;
     border-spacing: 0;
@@ -9,7 +9,7 @@
 
     margin-bottom:125px
 }
-.zui-table thead th {
+.data_table thead th {
     background-color: #338033;
     border: solid 1px #338033;
     color: white;
@@ -31,7 +31,7 @@ thead, tbody tr {
     table-layout:fixed;
 }
 
-.zui-table tbody td {
+.data_table tbody td {
     border: solid 1px #338033;
     color: #333;
     padding: 10px;
@@ -127,7 +127,7 @@ thead, tbody tr {
     bottom:60%;
     transform: translateX(-50%) translateY(-50%);
     vertical-align: middle;
-    font-size: x-large;
+    font-size: large;
     color: #cccccc;
 
 }
