@@ -16,12 +16,11 @@ function availability(){
     }
 }
 
-function initialize_connection() {
+function onConnectButtonClick() {
 
     if (availability() === true){ //check if browser supports Web Bluetooth
 
         let attributes = {
-            //acceptAllDevices: true,
             filters: [{
                 services: [configuration_uuid]
             }],
@@ -53,8 +52,8 @@ function establish_connection(thingy) {
     thingy.gatt.connect()
         .then(server => { // (with arrow functions () => x is short for () => { return x; }).
             console.log('Getting Service');
-            //let message = 'Getting Service...';
-           send_to_popup('Getting Service...')
+
+            send_to_popup('Getting Service...')
             return server.getPrimaryService(service_uuid);
         })
         .then(service => {
@@ -71,4 +70,24 @@ function establish_connection(thingy) {
         }).catch(error => {
         console.log(error);
     });
+}
+
+function onDisconnectButtonClick() {
+    console.log('Disconnecting from Bluetooth Device...');
+    let message = 'Disconnecting from Bluetooth Device...';
+    chrome.runtime.sendMessage({
+        message
+    }, function (response) {
+        console.dir(response);
+    });
+    if (bluetoothDevice.gatt.connected) {
+        bluetoothDevice.gatt.disconnect();
+        isConnected = false
+
+        send_to_popup(isConnected)
+        send_to_popup("Disconnected")
+
+    } else {
+        send_to_popup("Bluetooth Device is already disconnected")
+    }
 }

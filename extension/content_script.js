@@ -15,15 +15,14 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
     //------------------Connect Tab-------------------//
         if(request.message === "connect" ) {
-            initialize_connection(); //establish_connection.js
+            onConnectButtonClick(); //establish_connection.js
         }
 
         else if(request.message === "disconnect"){
-            console.log("YOOOOO");
             onDisconnectButtonClick();
         }
 
-        else if(request.message === "inquiry") {
+        else if(request.message === "connection_state_inquiry") {
             send_to_popup(isConnected)
         }
     //------------------Collect Tab------------------//
@@ -243,23 +242,5 @@ function send_request(value){
 
 
 
-function onDisconnectButtonClick() {
-    console.log('Disconnecting from Bluetooth Device...');
-    let message = 'Disconnecting from Bluetooth Device...';
-    chrome.runtime.sendMessage({
-        message
-    }, function (response) {
-        console.dir(response);
-    });
-    if (bluetoothDevice.gatt.connected) {
-        bluetoothDevice.gatt.disconnect();
-        isConnected = false
 
-        send_to_popup(isConnected)
-        send_to_popup("Disconnected")
-
-    } else {
-        log('> Bluetooth Device is already disconnected');
-    }
-}
 
