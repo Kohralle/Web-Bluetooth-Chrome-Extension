@@ -1,12 +1,9 @@
-
 function start_notifications_for_ml() {
     characteristic_object.addEventListener('characteristicvaluechanged', write_temperature_for_ml);
     console.log("YUH");
     characteristic_object.startNotifications()
         .then(_ => {
             console.log('Start reading...')
-            //document.querySelector('#start').disabled = true
-            //document.querySelector('#stop').disabled = false
         })
         .catch(error => {
             console.log('[ERROR] Start: ' + error)
@@ -22,7 +19,6 @@ function write_temperature_for_ml(event) {
 
     const littleEndian = true;
     var quaternion = {
-
         x : event.target.value.getInt16(0, littleEndian) / 64,
         y : event.target.value.getInt16(2, littleEndian) / 64,
         z : event.target.value.getInt16(4, littleEndian) / 64
@@ -37,10 +33,6 @@ function write_temperature_for_ml(event) {
     }
 
     else {
-        //////////
-
-        //const data = value
-
         const options = {
             method: 'POST',
             headers:{
@@ -48,10 +40,7 @@ function write_temperature_for_ml(event) {
             },
             body: JSON.stringify(prediction_array)
         };
-
-
         fetch('http://localhost:8080/predict', options).then(response => response.json()).then(data => send_to_popup(data));
-        //throw new Error("Something went badly wrong!");
     }
 
     function send_to_popup(prediction) {
@@ -61,6 +50,4 @@ function write_temperature_for_ml(event) {
             console.dir(response);
         });
     }
-
-
 }

@@ -15,8 +15,6 @@ function disconnect(){
     });
 }
 
-
-
 function inquireForButton(){
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         var activeTab = tabs[0];
@@ -24,7 +22,6 @@ function inquireForButton(){
         console.log("CLICKEDDD")
     });
 }
-
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.log(message)
@@ -47,6 +44,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 elem.parentNode.removeChild(elem);
             }
         }
+        //inquireForButton();
 
     }
 

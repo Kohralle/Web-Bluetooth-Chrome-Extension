@@ -28,7 +28,7 @@
   "content_scripts": [
     {
       "all_frames": true,
-      "js": ["content_script.js", "predict.js"],
+      "js": ["content_script.js", "predict.js", "establish_connection.js"],
       "matches": ["https://mail.google.com/mail/*"],
       "run_at": "document_idle"
     }

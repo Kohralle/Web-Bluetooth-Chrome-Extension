@@ -13,29 +13,25 @@ function send_to_popup(message){
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        if( request.message === "connect" ) {
-            get_device_object();
-        }
-        else if(request.message === "read"){
-            start_notifications();
-        }
-        else if(request.message === "stop"){
-            stop_notifications();
-        }
-        else if(request.message === "train"){
-            retrieve_database();
-            training_status_interval = setInterval(check_training_status, 1000);
-        }
-        else if(request.message === "predict"){
-            console.log("YOOOOO");
-            start_notifications_for_ml();
-            //start_notifications_for_ml();
+    //------------------Connect Tab-------------------//
+        if(request.message === "connect" ) {
+            initialize_connection(); //establish_connection.js
         }
 
         else if(request.message === "disconnect"){
             console.log("YOOOOO");
             onDisconnectButtonClick();
-            //start_notifications_for_ml();
+        }
+
+        else if(request.message === "inquiry") {
+            send_to_popup(isConnected)
+        }
+    //------------------Collect Tab------------------//
+        else if(request.message === "read"){
+            start_notifications();
+        }
+        else if(request.message === "stop"){
+            stop_notifications();
         }
 
         else if(request.message === "sitting"){
@@ -53,17 +49,11 @@ chrome.runtime.onMessage.addListener(
             fetch_state(2)
         }
 
-        else if(request.message === "inquiry") {
-            console.log("YOOOOO");
-
-            console.log("YOOOOO");
-            send_to_popup(isConnected)
-        }
-
         else if(request.message == "collect_state_inquiry"){
             send_to_popup(collect_state)
 
         }
+    //------------------Data Tab--------------------//
 
         else if(request.message == "get_database"){
             pull_database_interval = setInterval(get_db, 1000);
@@ -73,12 +63,22 @@ chrome.runtime.onMessage.addListener(
         else if(request.message == "reset_database"){
             fetch('http://localhost:8080/reset_database').then(response => response.json())
                 .then(data => {
-                    if(data === true){
-                        send_to_popup("database reset")
-                    }
+                        if(data === true){
+                            send_to_popup("database reset")
+                        }
+                    });
+        }
 
-                    }
-                );
+    //------------------Train Tab------------------//
+        else if(request.message === "train"){
+            retrieve_database();
+            training_status_interval = setInterval(check_training_status, 1000);
+        }
+    //------------------Predict Tab---------------//
+
+        else if(request.message === "predict"){
+            console.log("YOOOOO");
+            start_notifications_for_ml();
         }
 
     }
@@ -166,114 +166,7 @@ function retrieve_database(){
 
 };
 
-var configuration_uuid = 'ef680100-9b35-4933-9b10-52ffa9740042'
 
-var service_uuid = 'ef680400-9b35-4933-9b10-52ffa9740042'
-var characteristic_uuid = 'ef680406-9b35-4933-9b10-52ffa9740042'
-var characteristic_object;
-var bluetoothDevice;
-
-function availability(){
-    if (!navigator.bluetooth) {
-        console.log('No Web Bluetooth connectivity, Web Bluetooth is supported on Chrome v. 56+, Opera v. 43+, Android browser v. 67+, Opera mobile v. 46+, Chrome for Android v. 70+ and Samsung Internet v 6.2+')
-        //the line above displays on firefox but not on chrome, so it works as expected
-        return false
-    }
-
-    else {
-        return true
-    }
-}
-
-
-
-function get_device_object() {
-
-    if (availability() === true){ //check if browser supports Web Bluetooth
-
-        let attributes = {
-            //acceptAllDevices: true,
-            filters: [{
-                services: [configuration_uuid]
-           }],
-            optionalServices: [service_uuid]
-        }
-
-        console.log('Requesting Device Object');
-
-        navigator.bluetooth.requestDevice(attributes)
-            .then(thingy => { //returns a promise to an object, which we further resolve to get subsequent data
-                bluetoothDevice = thingy
-
-                let message = 'Requesting Device Object...'
-                chrome.runtime.sendMessage({
-                    message
-                }, function (response) {
-                    console.dir(response);
-                });
-
-                establish_connection(thingy)
-                console.log('Sending GATT request');
-
-
-            })
-            .catch(error => {
-                console.log(error);
-            });
-
-    }
-}
-
-function establish_connection(thingy) {
-
-    let characteristic_uuid = 'ef680406-9b35-4933-9b10-52ffa9740042' //uuid for accelerometer
-
-    thingy.gatt.connect()
-        .then(server => { // (with arrow functions () => x is short for () => { return x; }).
-            console.log('Getting Service');
-            let message = 'Getting Service...';
-            chrome.runtime.sendMessage({
-                message
-            }, function (response) {
-                console.dir(response);
-            });
-            return server.getPrimaryService(service_uuid);
-        })
-        .then(service => {
-            console.log('Getting Characteristic');
-            let message = 'Getting Characteristic...';
-            chrome.runtime.sendMessage({
-                message
-            }, function (response) {
-                console.dir(response);
-            });
-            return service.getCharacteristic(characteristic_uuid);
-        })
-        .then(characteristic => {
-            //console.log(characteristic.readValue());
-            //characteristic.addEventListener('characteristicvaluechanged', write_temperature);
-            characteristic_object = characteristic
-
-            isConnected = true;
-
-            chrome.runtime.sendMessage({
-               isConnected
-            }, function (response) {
-                console.dir(response);
-            });
-
-            let message = "Connected!"
-
-            chrome.runtime.sendMessage({
-                message
-            }, function (response) {
-                console.dir(response);
-            });
-
-        }).catch(error => {
-        console.log(error);
-    });
-}
 
 function start_notifications() {
     characteristic_object.addEventListener('characteristicvaluechanged', write_temperature);
@@ -362,18 +255,8 @@ function onDisconnectButtonClick() {
         bluetoothDevice.gatt.disconnect();
         isConnected = false
 
-        chrome.runtime.sendMessage({
-            isConnected
-        }, function (response) {
-            console.dir(response);
-        });
-
-        let message = "Disconnected"
-        chrome.runtime.sendMessage({
-            message
-        }, function (response) {
-            console.dir(response);
-        });
+        send_to_popup(isConnected)
+        send_to_popup("Disconnected")
 
     } else {
         log('> Bluetooth Device is already disconnected');

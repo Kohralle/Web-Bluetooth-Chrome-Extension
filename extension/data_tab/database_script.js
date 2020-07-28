@@ -67,13 +67,21 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
         html+="</tbody>" + "</table>";
 
-        document.getElementById("box").innerHTML = html;
+        //setting the html for that data statistics and table
+        document.getElementById("box").innerHTML = html; //appending the table onto the extension
+        document.getElementById("temp").id = "data_statistics"; // assigning css through code to make it load after database is pulled
         document.getElementById("data_statistics").innerHTML = `Data Statistics`
         document.getElementById("total_entry").innerHTML = `Total entries: ${rows.length}`;
         document.getElementById("walk_entry").innerHTML = `Walking entries: ${walk_counter}`;
         document.getElementById("sit_entry").innerHTML = `Sitting entries: ${sit_counter}`;
         document.getElementById("stand_entry").innerHTML = `Standing entries: ${stand_counter}`
 
+        //setting the button parameters to make it load nicely with the data table
+        let button = document.getElementById("reset");
+        button.innerText = "Reset Data";
+        button.className = "button_style";
+
+        //If Database is empty, print a statement inside
         if(rows.length===0){
             document.getElementById("database_empty").innerHTML = `The Database is Empty`
         }
@@ -88,7 +96,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             }, 1100);
 
     }
-
 
     sendResponse({
         data: "success!"
