@@ -16,7 +16,12 @@ module.exports.loss_function = function (data) {
     return object;
 }
 
+module.exports.load_model = async function () {
+    model = await tf.loadLayersModel('file://./model/model.json');
+}
+
 const tf =  require('@tensorflow/tfjs');
+require('@tensorflow/tfjs-node');
 //import * as tf from '@tensorflow/tfjs-node'
 function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
@@ -295,7 +300,7 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
 
     model = tf.sequential(); //creating an empty architecture for the model
     const learningRate = .001;// was .01
-    const numberofEpochs = 10; //
+    const numberofEpochs = 1; //
     //https://www.youtube.com/watch?v=EoYfa6mYOG4
     //what we can do here is implement the notion of batch-size to increase the perfomance of training the model
     //check to add this later
@@ -353,6 +358,7 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
 //fit is used to train the model with data examples against their target values
     const history = await model.fit(xTrain, yTrain, options); //trains a model for a fixed number of epochs
     training_finished = true;
+    await model.save('file://./model');
     return model
 
 }

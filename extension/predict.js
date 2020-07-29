@@ -1,21 +1,28 @@
-function start_notifications_for_ml() {
-    characteristic_object.addEventListener('characteristicvaluechanged', write_temperature_for_ml);
-    console.log("YUH");
-    characteristic_object.startNotifications()
-        .then(_ => {
-            console.log('Start reading...')
-        })
-        .catch(error => {
-            console.log('[ERROR] Start: ' + error)
-        })
-        
-    return write_temperature_for_ml
+function start_prediction() {
+    if (isConnected === false){
+        send_to_popup("Please connect")
+    }
+
+    else{
+        characteristic_object.addEventListener('characteristicvaluechanged', make_prediction_object);
+        console.log("YUH");
+        characteristic_object.startNotifications()
+            .then(_ => {
+                console.log('Start reading...')
+            })
+            .catch(error => {
+                console.log('[ERROR] Start: ' + error)
+            })
+
+        //return write_temperature_for_ml
+    }
+
 }
 
 var counter = 0;
 var prediction_array = [];
 
-function write_temperature_for_ml(event) {
+function make_prediction_object(event) {
 
     const littleEndian = true;
     var quaternion = {

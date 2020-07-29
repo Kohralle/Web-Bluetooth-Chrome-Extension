@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.log(typeof message)
+    //fiz this to work on send to popup
     if (message.prediction == 0){
         document.getElementById("prediction").innerHTML = "Sitting";
     }
@@ -30,6 +31,21 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     else if (message.prediction == 2){
         document.getElementById("prediction").innerHTML = "Standing";
+    }
+
+    else if(message.message === "disable stop button"){
+        document.getElementById("prediction").innerHTML = "Stopped";
+    }
+
+    else if(message.message === "Please connect"){
+        document.getElementById("prediction").innerHTML = "Device is not connected";
+        document.getElementById("prediction").style.fontSize = "small"
+        document.getElementById("prediction").style.width = "140px"
+        document.getElementById("prediction").style.color = "red"
+
+
+
+
     }
 
     sendResponse({

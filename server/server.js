@@ -202,12 +202,19 @@ app.get('/pull_database', async function (request, response) {
 app.get('/reset_database', async function (request, response) {
     console.log("Got request")
     await clear_database();
-    console.log("NOTHA")
+    console.log("NOTHA ")
     let message = {reset: true}
     response.send(true);
 });
 
+app.get('/load_pretrained_model', async function (request, response) {
+    console.log("wanna load")
+    ml.load_model();
+    let message = {message: "The model has loaded"}
+    response.send(message);
+});
 
 
+//const model = await tf.loadLayersModel('file://path/to/my-model/model.json');
 
 

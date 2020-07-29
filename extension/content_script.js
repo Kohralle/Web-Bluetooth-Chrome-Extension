@@ -65,13 +65,21 @@ chrome.runtime.onMessage.addListener(
 
     //------------------Train Tab------------------//
         else if(request.message === "train"){
-            train_model();
+            sendTrainModelRequest();
             training_status_interval = setInterval(check_training_status, 1000);
+        }
+        
+        else if(request.message === "load_model"){
+            loadModelRequest();
         }
     //------------------Predict Tab---------------//
 
         else if(request.message === "predict"){
-            start_notifications_for_ml();
+            start_prediction(); //predict.js
+        }
+
+        else if(request.message === "stop"){
+            stop_notifications();
         }
     }
 );
@@ -117,11 +125,22 @@ function make_data_object(event) {
         //t : key_value
     }
     send_to_popup(accelerometer)
-    console.log(accelerometer)
-    send_request(accelerometer)
+    
+    const options = {
+        method: 'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify(accelerometer)
+    };
+
+    fetch('http://localhost:8080/store_values', options).then(response=>response.json())
+        .then(data => console.log('Response from http://localhost:8080/store_values:' + data))
+        .catch(error => {
+            console.log('ERROR: ' + error)
+        })
+
 }
-
-
 
 function stop_notifications() {
     characteristic_object.removeEventListener('characteristicvaluechanged', make_data_object);
@@ -166,7 +185,6 @@ function databaseForDataTab(){
             if(Array.isArray(data)){
                 clearInterval(pull_database_interval);
                 let message = {message: "database", database: data}
-                console.log(data)
                 send_to_popup(message);
             }
 
@@ -182,9 +200,9 @@ function reset_database() {
         });
 }
 
-function train_model(){
+function sendTrainModelRequest(){
 
-    fetch('http://localhost:8080/getdata').then(response => {
+    fetch('http://localhost:8080/train').then(response => {
         return response.json()
     })
         .then(whole_database=>{
@@ -195,51 +213,36 @@ function train_model(){
 };
 
 
-
-function assess_interval(data){
-    console.log(typeof data)
-    if(data === false){
-        send_to_popup("Training in progress...")
-        console.log(data)
-    }
-    else if(data === true){
-        send_to_popup("Training Completed")
-        clearInterval(training_status_interval);
-    }
-}
-
 function check_training_status() {
-    fetch('http://localhost:8080/learning_progress')
+    fetch('http://localhost:8080/learning_progress_status')
         .then(response => response.json())
-        .then(data => assess_interval(data));
+        .then(data => {
+            if(data === false){
+                send_to_popup("Training in progress...")
+                console.log(data)
+            }
+            else if(data === true){
+                send_to_popup("Training Completed")
+                clearInterval(training_status_interval);
+            }
+        });
 }
 
+function loadModelRequest() {
+    console.log("Want to load model")
 
+        fetch('http://localhost:8080/load_pretrained_model')
+            .then(response => response.json())
+            .then(data => {
+                    console.log(data)
+                    let message = {message: "database", database: data}
+                    send_to_popup(message);
+                    console.log('Response from http://localhost:8080/load_pretrained_model: ' + data)
 
-
-
-
-
-
-
-function send_request(value){
-    const data = value
-
-    const options = {
-        method: 'POST',
-        headers:{
-            'Content-Type':'application/json'
-        },
-        body: JSON.stringify(data)
-    };
-
-    fetch('http://localhost:8080/handle', options).then(response=>{
-
-    })
-
-};
-
-
+            }).catch(error => {
+            console.log('ERROR: ' + error)
+        })
+}
 
 
 
