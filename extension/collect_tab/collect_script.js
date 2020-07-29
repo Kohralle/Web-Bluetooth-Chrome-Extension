@@ -1,21 +1,21 @@
 function read() {
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "read"});
+        chrome.tabs.sendMessage(activeTab.id, {"message": "read_values"});
     });
 }
 
 function stop() {
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "stop"});
+        chrome.tabs.sendMessage(activeTab.id, {"message": "stop_values"});
     });
 }
 
 function sitting() {
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "sitting"});
+        chrome.tabs.sendMessage(activeTab.id, {"message": "set_state_sitting"});
         document.getElementById("collect_state").innerHTML = "Sitting";
     });
 }
@@ -23,7 +23,7 @@ function sitting() {
 function walking() {
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "walking"});
+        chrome.tabs.sendMessage(activeTab.id, {"message": "set_state_walking"});
         document.getElementById("collect_state").innerHTML = "Walking";
     });
 }
@@ -31,7 +31,7 @@ function walking() {
 function standing() {
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "standing"});
+        chrome.tabs.sendMessage(activeTab.id, {"message": "set_state_standing"});
         document.getElementById("collect_state").innerHTML = "Standing";
     });
 }
@@ -85,10 +85,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         document.getElementById("collect_alert").innerText = message.message;
     }
 
-    //document.getElementById("p1").innerHTML = message.quarterion.x;
-    document.getElementById("x").innerHTML = message.quaternion.x;
-    document.getElementById("y").innerHTML = message.quaternion.y;
-    document.getElementById("z").innerHTML = message.quaternion.z;
+    else if((typeof message.message) === "object") {
+        document.getElementById("x").innerHTML = message.message.x;
+        document.getElementById("y").innerHTML = message.message.y;
+        document.getElementById("z").innerHTML = message.message.z;
+    }
 
     sendResponse({
         data: "I am fine, thank you. How is life in the background?"
@@ -103,4 +104,3 @@ function cantClickStartAlert() {
 function cantClickStopAlert() {
     document.getElementById("collect_alert").innerText ="Nothing to stop"
 }
-

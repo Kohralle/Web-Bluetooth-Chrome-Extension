@@ -26,26 +26,27 @@ chrome.runtime.onMessage.addListener(
             send_to_popup(isConnected)
         }
     //------------------Collect Tab------------------//
-        else if(request.message === "read"){
+        else if(request.message === "read_values"){
+            console.log("READ VAL WORKIN")
             start_notifications();
         }
-        else if(request.message === "stop"){
+        else if(request.message === "stop_values"){
             stop_notifications();
         }
 
-        else if(request.message === "sitting"){
+        else if(request.message === "set_state_sitting"){
             collect_state = "Sitting"
             fetch_state(0)
             console.log(collect_state);
         }
 
-        else if(request.message === "walking"){
+        else if(request.message === "set_state_walking"){
             collect_state = "Walking"
             fetch_state(1)
             console.log(collect_state);
         }
 
-        else if(request.message === "standing"){
+        else if(request.message === "set_state_standing"){
             collect_state = "Standing"
             fetch_state(2)
             console.log(collect_state);
@@ -82,7 +83,6 @@ chrome.runtime.onMessage.addListener(
             console.log("YOOOOO");
             start_notifications_for_ml();
         }
-
     }
 );
 
@@ -185,33 +185,23 @@ function start_notifications() {
     else {
         console.log(collect_state);
         send_to_popup("Choose a state first!")
-
     }
 
 }
 
 function write_temperature(event) {
-    //console.log(event)
-    //var now = new Date()
-    //var timestamp = now.getTime();
-    const littleEndian = true;
-    var quaternion = {
 
-        x : event.target.value.getInt16(0, littleEndian) / 64,
-        y : event.target.value.getInt16(2, littleEndian) / 64,
-        z : event.target.value.getInt16(4, littleEndian) / 64,
+    const littleEndian = true;
+    let quaternion = {
+
+        x: event.target.value.getInt16(0, littleEndian) / 64,
+        y: event.target.value.getInt16(2, littleEndian) / 64,
+        z: event.target.value.getInt16(4, littleEndian) / 64,
         //t : key_value
 
-    }
+    };
 
-
-
-    chrome.runtime.sendMessage({
-        quaternion
-    }, function (response) {
-        console.dir(response);
-    });
-
+    send_to_popup(quaternion)
 
     console.log(quaternion);
 

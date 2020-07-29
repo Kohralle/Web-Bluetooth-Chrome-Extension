@@ -87,7 +87,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         get_database()
         setTimeout( //timeout function for nice appearance of flushing the table
             function() {
-                document.getElementById("database_empty").innerHTML = `The Database Has Been Emptied`
                 document.getElementById("total_entry").innerText = "Total entries: 0"
                 document.getElementById("walk_entry").innerText = "Walking entries: 0";
                 document.getElementById("sit_entry").innerText = "Sitting entries: 0";
