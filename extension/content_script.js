@@ -1,7 +1,7 @@
 let isConnected = false;
 let training_status_interval;
 let pull_database_interval;
-var collect_state;
+let collect_state;
 
 function send_to_popup(message){
     chrome.runtime.sendMessage({
@@ -27,9 +27,9 @@ chrome.runtime.onMessage.addListener(
         }
     //------------------Collect Tab------------------//
         else if(request.message === "read_values"){
-            console.log("READ VAL WORKIN")
             start_notifications();
         }
+
         else if(request.message === "stop_values"){
             stop_notifications();
         }
@@ -64,12 +64,7 @@ chrome.runtime.onMessage.addListener(
         }
 
         else if(request.message == "reset_database"){
-            fetch('http://localhost:8080/reset_database').then(response => response.json())
-                .then(data => {
-                        if(data === true){
-                            send_to_popup("database reset")
-                        }
-                    });
+            reset_database();
         }
 
     //------------------Train Tab------------------//
@@ -80,20 +75,62 @@ chrome.runtime.onMessage.addListener(
     //------------------Predict Tab---------------//
 
         else if(request.message === "predict"){
-            console.log("YOOOOO");
             start_notifications_for_ml();
         }
     }
 );
 
-function get_db(){
-    fetch('http://localhost:8080/pull_database',{
-        headers : {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+function start_notifications() {
+    if (isConnected === false){
+        console.log(isConnected);
+        send_to_popup("Device is not connected")
+    }
+    else {
+        if(collect_state === "Sitting"|| collect_state === "Walking"|| collect_state ==="Standing"){
+
+            characteristic_object.addEventListener('characteristicvaluechanged', make_data_object);
+            characteristic_object.startNotifications() //most code editors don't recognize this function
+                .then(_ => {
+                    console.log('Start reading...')
+                    send_to_popup("disable start button")
+                })
+                .catch(error => {
+                    console.log('[ERROR] Start: ' + error)
+                })
         }
 
-    }).then(response => response.json())
+        else {
+            send_to_popup("Choose a state first")
+        }
+    }
+}
+
+function make_data_object(event) {
+    const littleEndian = true
+    let accelerometer = {
+        //This way of reading values was taken from the official Nordic github account
+        x: event.target.value.getInt16(0, littleEndian) / 64,
+        y: event.target.value.getInt16(2, littleEndian) / 64,
+        z: event.target.value.getInt16(4, littleEndian) / 64,
+        //t : key_value
+    }
+    send_to_popup(accelerometer)
+    console.log(accelerometer)
+    send_request(accelerometer)
+}
+
+function reset_database() {
+    fetch('http://localhost:8080/reset_database').then(response => response.json())
+        .then(data => {
+            if(data === true){
+                send_to_popup("database reset")
+            }
+        });
+}
+
+function get_db(){
+    fetch('http://localhost:8080/pull_database')
+        .then(response => response.json())
         .then(data => {
             if(Array.isArray(data)){
                 clearInterval(pull_database_interval);
@@ -105,6 +142,8 @@ function get_db(){
         });
 }
 
+
+
 function fetch_state(data) {
     let message = {state: data}
     const options = {
@@ -114,38 +153,26 @@ function fetch_state(data) {
         },
         body: JSON.stringify(message)
     };
-    //console.log(JSON.stringify(value));
-    fetch('http://localhost:8080/set_state', options).then(response=>{
-        //console.log(response)
-        //var out = response.json()
-    })
-    //.then(token => { console.log(token } )
+    fetch('http://localhost:8080/set_state', options)
+        .then(response=>response.json())
+        .then(data => console.log(data))
 }
 
 function assess_interval(data){
     console.log(typeof data)
-    if(data == false){
+    if(data === false){
         send_to_popup("Training in progress...")
-
         console.log(data)
     }
-    else if(data == true){
-        console.log("Training dun")
+    else if(data === true){
         send_to_popup("Training Completed")
-
         clearInterval(training_status_interval);
     }
 }
 
 function check_training_status() {
-    setTimeout(function(){ console.log("Hello"); }, 3000);
-    fetch('http://localhost:8080/learning_progress',{
-        headers : {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-
-    }).then(response => response.json())
+    fetch('http://localhost:8080/learning_progress')
+        .then(response => response.json())
         .then(data => assess_interval(data));
 }
 
@@ -158,59 +185,19 @@ function retrieve_database(){
             const result = JSON.parse(whole_database.payload) // returns all database data in json format
 
             console.log(result);
-            // assess_model(result)
             return result
         })
 
     //response.send(JSON.stringify(state));
 
-
-
 };
 
-function start_notifications() {
-    if(collect_state === "Sitting"|| collect_state === "Walking"|| collect_state ==="Standing"){
 
-        characteristic_object.addEventListener('characteristicvaluechanged', write_temperature);
-        characteristic_object.startNotifications()
-            .then(_ => {
-                console.log('Start reading...')
-                send_to_popup("disable start button")
-            })
-            .catch(error => {
-                console.log('[ERROR] Start: ' + error)
-            })
-    }
 
-    else {
-        console.log(collect_state);
-        send_to_popup("Choose a state first!")
-    }
 
-}
-
-function write_temperature(event) {
-
-    const littleEndian = true;
-    let quaternion = {
-
-        x: event.target.value.getInt16(0, littleEndian) / 64,
-        y: event.target.value.getInt16(2, littleEndian) / 64,
-        z: event.target.value.getInt16(4, littleEndian) / 64,
-        //t : key_value
-
-    };
-
-    send_to_popup(quaternion)
-
-    console.log(quaternion);
-
-    send_request(quaternion)
-
-}
 
 function stop_notifications() {
-    characteristic_object.removeEventListener('characteristicvaluechanged', write_temperature);
+    characteristic_object.removeEventListener('characteristicvaluechanged', make_data_object);
     characteristic_object.stopNotifications()
         .then(_ => {
             console.log('Stop reading...')

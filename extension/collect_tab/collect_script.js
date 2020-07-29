@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-
+    console.log(message);
     //for setting the state in the window
     if(message.message == "Standing"||message.message == "Walking"||message.message == "Sitting"){
         document.getElementById("collect_state").innerHTML = message.message ;
@@ -71,7 +71,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         document.getElementById("collect_alert").innerText =""
     }
 
-    //same idea as above but for
+    //same idea as above but for the stop button
     else if (message.message === "disable stop button"){
         document.getElementById("emit_values").removeEventListener("click", cantClickStartAlert);
         document.getElementById("emit_values").addEventListener("click", read);
@@ -81,7 +81,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     }
 
-    else if (message.message === "Choose a state first!"){
+    else if (message.message === "Choose a state first"){
+        document.getElementById("collect_alert").innerText = message.message;
+    }
+
+    else if (message.message === "Device is not connected"){
         document.getElementById("collect_alert").innerText = message.message;
     }
 
@@ -92,7 +96,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
 
     sendResponse({
-        data: "I am fine, thank you. How is life in the background?"
+        data: "Success! (collect tab)"
     });
 });
 
