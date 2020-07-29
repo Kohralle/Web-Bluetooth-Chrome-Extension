@@ -113,7 +113,7 @@ async function send_to_database (value){
 }
 
 var array = []
-app.post('/handle', async function (request, response) {
+app.post('/store_values', async function (request, response) {
 
     //console.log(request.body.value);
     //I implemented a queue for incoming values so that they do not overwrite as they come in quite quick
@@ -144,7 +144,7 @@ app.post('/predict', async function (request, response) {
     response.send(JSON.stringify(state));
 });
 
-app.get('/getdata', async function (request, response) {
+app.get('/train', async function (request, response) {
     console.log("GOT THE REQUEST");
     const db = client.db("test_subjects");
     const test = db.collection('pawel');
@@ -177,7 +177,7 @@ app.get('/getdata', async function (request, response) {
 
 });
 
-app.get('/learning_progress', async function (request, response) {
+app.get('/learning_progress_status', async function (request, response) {
     let finished = false
 
     if(global.training_finished == true){
