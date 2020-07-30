@@ -232,11 +232,13 @@ function loadModelRequest() {
     console.log("Want to load model")
 
         fetch('http://localhost:8080/load_pretrained_model')
-            .then(response => response.json())
+            .then(response => {
+                return response.text()
+                })
             .then(data => {
                     console.log(data)
                     let message = {message: "database", database: data}
-                    send_to_popup(message);
+                    send_to_popup(data);
                     console.log('Response from http://localhost:8080/load_pretrained_model: ' + data)
 
             }).catch(error => {

@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("stop_predict").addEventListener("click", stop_prediction);
 });
 
+
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.log(typeof message)
     //fiz this to work on send to popup

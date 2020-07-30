@@ -20,7 +20,9 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    if(message.message == "Training in progress..." || message.message == "Training Completed"){
+    if(message.message == "Training in progress..."
+        || message.message == "Training Completed"
+        || message.message =="The model has loaded"){
         document.getElementById("train_status").innerHTML = message.message;
     }
 

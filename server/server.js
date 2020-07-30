@@ -210,8 +210,10 @@ app.get('/reset_database', async function (request, response) {
 app.get('/load_pretrained_model', async function (request, response) {
     console.log("wanna load")
     ml.load_model();
-    let message = {message: "The model has loaded"}
-    response.send(message);
+    let message =  {message:"The model has loaded"}//"The model has loaded"
+    let sende = true//JSON.stringify(message)
+    console.log(message);
+    response.send("The model has loaded");
 });
 
 
