@@ -146,6 +146,7 @@ app.post('/predict', async function (request, response) {
 
 app.get('/train', async function (request, response) {
     console.log("GOT THE REQUEST");
+
     const db = client.db("test_subjects");
     const test = db.collection('pawel');
 
@@ -156,37 +157,40 @@ app.get('/train', async function (request, response) {
     console.log(typeof result)
     console.log("THIS DA RESULT")
     //console.log(result)
-    console.log("YO GURT")
-    console.log(Object.values(result));
-    console.log(typeof Object.values(result));
-    const haha = JSON.stringify(result)
+    //console.log("YO GURT")
+    //console.log(Object.values(result));
+    //console.log(typeof Object.values(result));
+    //const haha = JSON.stringify(result)
     console.log(typeof haha)
+
     ml.learn(result);
 
-    var fs = require('fs');
-    fs.writeFile("test.txt", haha, function(err) {
-    if (err) {
-        console.log(err);
-    }
-});
-    //console.log(haha);
-    response.json({
-        status: "success",
-        payload: haha
-    })
+    setInterval(function(){
+    response.write(JSON.stringify(ml.loss_function()))}, 1000);
+
+
+    //response.header('Access-Control-Allow-Origin', '*');
+    //response.set('Content-Type', 'text/plain');
+    //response.send("The training has started")
+
+
 
 });
 
 app.get('/learning_progress_status', async function (request, response) {
     let finished = false
+    console.log(ml.loss_function())
+    let variable = ml.loss_function();
 
     if(global.training_finished == true){
-        finished = true
+        variable.finished = true
     }
-
-
-    response.send(finished);
+    let send = JSON.stringify(variable)
+    response.type('json')
+    response.send(send)
+    //response.send(finished);
 });
+
 var state = 0;
 app.post('/set_state', async function (request, response) {
     console.log(request.body.state)
@@ -195,6 +199,7 @@ app.post('/set_state', async function (request, response) {
 });
 
 app.get('/pull_database', async function (request, response) {
+    console.log("LOL")
     let message = await listCollections();
     response.send(message);
 });
@@ -210,9 +215,7 @@ app.get('/reset_database', async function (request, response) {
 app.get('/load_pretrained_model', async function (request, response) {
     console.log("wanna load")
     ml.load_model();
-    let message =  {message:"The model has loaded"}//"The model has loaded"
-    let sende = true//JSON.stringify(message)
-    console.log(message);
+    response.set('Content-Type', 'text/plain');
     response.send("The model has loaded");
 });
 

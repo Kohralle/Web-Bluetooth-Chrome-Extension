@@ -265,7 +265,7 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
 
     model = tf.sequential(); //creating an empty architecture for the model
     const learningRate = .001;// was .01
-    const numberofEpochs = 20; //
+    const numberofEpochs = 200; //
     //https://www.youtube.com/watch?v=EoYfa6mYOG4
     //what we can do here is implement the notion of batch-size to increase the perfomance of training the model
     //check to add this later

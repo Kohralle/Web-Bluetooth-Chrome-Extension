@@ -113,7 +113,7 @@ body {
     position:absolute;
     width: 150px;
     height: 60px;
-    top: 30%;
+    top: 35%;
     left: 25%;
 }
 
@@ -340,7 +340,7 @@ body {
     text-align: center;
     width: 300px;
     left: 50%;
-    top:45%;
+    top:60%;
 
     transform: translateX(-50%) translateY(-50%);
     vertical-align: middle;

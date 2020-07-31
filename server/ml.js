@@ -2,8 +2,8 @@
 global.model;
 global.training_finished =  false;
 
-global.send_epoch
-global.send_loss
+global.send_epoch = 0;
+global.send_loss = 0;
 var express = require('express');  //I am using express for starting the server and utilizing middleware
 var app = express();
 
@@ -12,7 +12,7 @@ function set_model(m) {
 }
 
 module.exports.loss_function = function (data) {
-    let object = {epoch: send_epoch, loss: send_loss}
+    let object = {epoch: send_epoch, loss: send_loss, num_epoch: 200}
     return object;
 }
 
@@ -300,9 +300,9 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
 
     model = tf.sequential(); //creating an empty architecture for the model
     const learningRate = .001;// was .01
-    const numberofEpochs = 1; //
+    const numberofEpochs = 200; //
     //https://www.youtube.com/watch?v=EoYfa6mYOG4
-    //what we can do here is implement the notion of batch-size to increase the perfomance of training the model
+    //what we can do here is implement the notion of batch-size to increase the perfomence of training the model
     //check to add this later
     const optimizer = tf.train.adam(learningRate) //read on this type of optimizer https://js.tensorflow.org/api/latest/#Training-Optimizers
     /*

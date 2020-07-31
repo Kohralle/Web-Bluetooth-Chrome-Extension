@@ -2,6 +2,63 @@
     position:absolute;
     width: 150px;
     height: 60px;
-    top: 30%;
+    top: 35%;
     left: 75%;
+}
+
+#myProgress {
+    position: absolute;
+    width: 90%;
+    background-color: #ddd;
+    top: 65%;
+    text-align: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    border-radius: 5px;
+    border: 2px solid #338033;
+
+    -webkit-transition: border linear .2s, box-shadow linear .2s;
+    -moz-transition: border linear .2s, box-shadow linear .2s;
+    -o-transition: border linear .2s, box-shadow linear .2s;
+    transition: border linear .2s, box-shadow linear .2s;
+    display: none;
+
+    outline: 0;
+    outline: thin dotted \9;
+}
+
+#myBar {
+    width: 0%;
+    height: 15px;
+    background-color: #338033;
+}
+
+
+#train_status_bar{
+    border-radius: .2em;
+    border: 2px solid #338033;
+
+    -webkit-transition: border linear .2s, box-shadow linear .2s;
+    -moz-transition: border linear .2s, box-shadow linear .2s;
+    -o-transition: border linear .2s, box-shadow linear .2s;
+    transition: border linear .2s, box-shadow linear .2s;
+
+    border-color: #338033;
+    background: #338033;
+    outline: 0;
+    outline: thin dotted \9;
+
+    line-height: 15px;
+
+    font-size: 12px;
+
+    color: #cccccc;
+    width: 130px;
+    height: 15px;
+    position: absolute;
+    text-align: center;
+    transform: translateX(-50%) translateY(-50%);
+    vertical-align: center;
+    top:53%;
+    left: 50%;
 }

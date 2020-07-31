@@ -81,6 +81,10 @@ chrome.runtime.onMessage.addListener(
         else if(request.message === "stop"){
             stop_notifications();
         }
+
+        else if(request.text === "getStuff"){
+            alert("GGUBER ZIEN2 TO PARUWA")
+        }
     }
 );
 
@@ -199,24 +203,22 @@ function reset_database() {
             }
         });
 }
-
+/*
 function sendTrainModelRequest(){
+    fetch('http://localhost:8080/train')
+        .then(response => response.text())
+        .then(data => console.log(data))
+        .catch(error => {
+        console.log('ERROR: ' + error)})
 
-    fetch('http://localhost:8080/train').then(response => {
-        return response.json()
-    })
-        .then(whole_database=>{
-            const result = JSON.parse(whole_database.payload) // returns all database data in json format
-            console.log(result);
-            return result
-        })
-};
+}
 
 
 function check_training_status() {
     fetch('http://localhost:8080/learning_progress_status')
         .then(response => response.json())
         .then(data => {
+            console.log(data)
             if(data === false){
                 send_to_popup("Training in progress...")
                 console.log(data)
@@ -225,9 +227,10 @@ function check_training_status() {
                 send_to_popup("Training Completed")
                 clearInterval(training_status_interval);
             }
-        });
+        }).catch(error => {
+        console.log('ERROR: ' + error)})
 }
-
+*/
 function loadModelRequest() {
     console.log("Want to load model")
 

@@ -1,3 +1,5 @@
+
+
 inquireForButton();
 
 // sends a request to content script to connect the thingy
@@ -68,6 +70,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             const element = document.getElementById('connect');
             element.parentNode.removeChild(element);
         }
+    }
+
+    else if(message.kupa === "kupa"){
+        alert("kupaa")
     }
 
     sendResponse({
