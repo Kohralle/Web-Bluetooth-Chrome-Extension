@@ -1,17 +1,19 @@
-//function called every time the data tab is clicked on
-function get_database(){
-
-    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-        var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message":"get_database"});
+function send_to_background(background) {
+    chrome.runtime.sendMessage({
+        background
+    }, function (response) {
+        console.dir(response);
     });
 }
 
+//function called every time the data tab is clicked on
+function get_database(){
+
+    send_to_background("get_database")
+}
+
 function reset_database() {
-    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-        var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message":"reset_database"});
-    });
+    send_to_background("reset_database");
 }
 get_database();
 

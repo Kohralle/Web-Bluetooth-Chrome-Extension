@@ -23,15 +23,15 @@ document.addEventListener("DOMContentLoaded", function() {
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.log(typeof message)
     //fiz this to work on send to popup
-    if (message.prediction == 0){
+    if (message.message == 0){
         document.getElementById("prediction").innerHTML = "Sitting";
     }
 
-    else if (message.prediction == 1){
+    else if (message.message == 1){
         document.getElementById("prediction").innerHTML = "Walking";
     }
 
-    else if (message.prediction == 2){
+    else if (message.message == 2){
         document.getElementById("prediction").innerHTML = "Standing";
     }
 
@@ -43,7 +43,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         document.getElementById("prediction").innerHTML = "Device is not connected";
         document.getElementById("prediction").style.fontSize = "small"
         document.getElementById("prediction").style.width = "140px"
-        document.getElementById("prediction").style.color = "red"
+
 
 
 

@@ -1,4 +1,6 @@
-//////////////////////////////////////
+const tf =  require('@tensorflow/tfjs');
+require('@tensorflow/tfjs-node');
+
 global.model;
 global.training_finished =  false;
 
@@ -20,9 +22,6 @@ module.exports.load_model = async function () {
     model = await tf.loadLayersModel('file://./model/model.json');
 }
 
-const tf =  require('@tensorflow/tfjs');
-require('@tensorflow/tfjs-node');
-//import * as tf from '@tensorflow/tfjs-node'
 function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
@@ -38,19 +37,11 @@ function normalize(min, max){
     return function (val) {
         return (val - min) / delta;
     };
-
-
-
-
-    console.log([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(normalize(5, 15)));
 }
-
 
 module.exports.learn = async function (data) {
     training_finished = false;
     let parsed_array = await convert_to_array(data)
-
-    //let normalized_array = await normalize_data(parsed_array)
 
     const [xTrain, yTrain, xTest, yTest] = getData(0.2, parsed_array) //get parse the data into 4 tensors for training
 
@@ -77,12 +68,10 @@ module.exports.learn = async function (data) {
     console.log(wrong)
     console.log(correct)
     model.summary()
-    //const saveResult = await model.save('downloads://my-model');
 
     console.log(model);
     console.log("SONE");
 }
-//module.exports.assess_model = assess_model();
 
 function convertToTensors(data, targets, testsplit){
     const numExamples = data.length;
@@ -111,9 +100,7 @@ function convertToTensors(data, targets, testsplit){
     // Create a 1D 'tf.Tensor' to hold the labels, and convert the number label
     // from the set {0, 1, 2} into one-hot encoding (.e.g., 0 --> [1, 0, 0]).
 
-
     const encoded_targets = tf.oneHot(tf.tensor1d(targets).toInt(), 3);
-
 
     // Split the data into training and test sets, using 'slice'.
     console.log("XTRAIN");
@@ -142,15 +129,12 @@ function convertToTensors(data, targets, testsplit){
     console.log(newyTrain.shape)
     console.log(newyTest.shape)
 
-
-
     return [xTrain, newyTrain, xTest, newyTest];
 
 }
 
 async function convert_to_array(db){
-   // console.log(db)
-    console.log("this db dogg")
+
     console.log(typeof db);
 
     let array = db.map(obj => Object.values(obj)); //convert json into an array
@@ -171,15 +155,12 @@ async function convert_to_array(db){
 
     number_of_classes = target_count.filter(onlyUnique).length //filter out the duplicates from an array to get the number of classes
     var data_length = array_no_id[0].length
+
     console.log("Array with no id")
     console.log(array_no_id)
     console.log("Array with no id len")
     console.log(array_no_id.length)
     console.log(target_count)
-
-    //var normalize = normalize_data(array_no_id)
-    //console.log(normalize)
-
 
     return array_no_id;
 }
@@ -213,7 +194,6 @@ function getData(testsplit, dataset){
             console.log(most_occoruring_state)
             var val_no_target = []
             for (const example of scope) {
-
                 const data = example.slice(0, example.length - 1)
                 val_no_target.push(data)
             }
@@ -240,13 +220,6 @@ function getData(testsplit, dataset){
             targetsByClass[most_occoruring_state].push(most_occoruring_state);
 
         }
-
-
-
-        console.log("3dimensional array")
-        console.log(dataByClass);
-        console.log("corresponding targets")
-        console.log(targetsByClass);
 
         //Initialize the arrays for training and testing
         const xTrains = []
@@ -281,58 +254,21 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
     xTest.print(true)
     yTest.print(true)
 
-
     console.log(xTrain.shape)
     console.log(yTrain.shape)
     console.log(xTest.shape)
     console.log(yTest.shape)
 
-
-
-
-
-
-
-
-
-
-
-
     model = tf.sequential(); //creating an empty architecture for the model
     const learningRate = .001;// was .01
     const numberofEpochs = 200; //
     //https://www.youtube.com/watch?v=EoYfa6mYOG4
-    //what we can do here is implement the notion of batch-size to increase the perfomence of training the model
-    //check to add this later
+
     const optimizer = tf.train.adam(learningRate) //read on this type of optimizer https://js.tensorflow.org/api/latest/#Training-Optimizers
-    /*
-       const hidden_layer = tf.layers.dense( //dense indicates that every layer is fully connected to a different layer
-           { units:100, activation: 'relu', inputShape: [xTrain.shape[1]]}) //shape shows the shape of a tensor, so the input will be the amount of columns
-           // was sigmoid
 
-           const hidden_layer2 = tf.layers.dense(
-            { units:100, activation: 'relu'})
-
-           const hidden_layer3 = tf.layers.dense(
-            { units:100, activation: 'relu'})
-
-       const output_layer = tf.layers.dense(
-            { units:4, activation: 'softmax'})
-
-       model.add(hidden_layer);
-       model.add(hidden_layer2);
-       model.add(hidden_layer3);
-       model.add(output_layer);
-
-       */
-    //console.log(newTrain.shape)
     console.log(yTrain.shape)
     console.log(xTest.shape)
-
     console.log(yTest.shape)
-
-
-
 
     model.add(tf.layers.lstm({units: 100, inputShape: [15, 3], activation: 'relu', returnsequences: true}))//, returnSequences: true}));
 
