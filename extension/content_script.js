@@ -68,7 +68,7 @@ chrome.runtime.onMessage.addListener(
         }
 
         else if(request.message === "stop"){
-            stop_notifications();
+            stop_notifications_for_predict(); //predict.js
         }
     }
 );
@@ -111,7 +111,6 @@ function make_data_object(event) {
         x: event.target.value.getInt16(0, littleEndian) / 64,
         y: event.target.value.getInt16(2, littleEndian) / 64,
         z: event.target.value.getInt16(4, littleEndian) / 64,
-        //t : key_value
     }
     send_to_popup(accelerometer)
     send_to_background(accelerometer)

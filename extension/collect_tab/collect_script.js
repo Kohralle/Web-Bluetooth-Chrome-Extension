@@ -1,3 +1,4 @@
+// all these functions are signals to start the execution of features in the content_script.js file
 function read() {
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         var activeTab = tabs[0];
