@@ -45,7 +45,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         send_to_background("dont interrupt")
         document.getElementById("train").disabled = true;
         epoch_progress = message.message.epoch
-
+        loss = message.message.loss
         var elem = document.getElementById("myBar");
         var width = 1;
         interval = setInterval(frame, 100);
@@ -64,7 +64,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 console.log("rate: " + rate)
                 console.log(epoch_progress*rate)
                 let progress = Math.round(epoch_progress*rate)
-                document.getElementById("train_status").innerText = `Training in progress... ${progress}%`
+                document.getElementById("train_status").innerText = `Training in progress... ${progress}% \n Loss: ${loss}`
                 elem.style.width = (epoch_progress * rate) + "%";
             }
         }

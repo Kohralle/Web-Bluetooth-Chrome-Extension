@@ -345,7 +345,7 @@ body {
 
     transform: translateX(-50%) translateY(-50%);
     vertical-align: middle;
-    font-size: medium;
+    font-size: 10px;
     color: #cccccc;
 }
 
