@@ -71,9 +71,6 @@ module.exports.learn = async function (data) {
     console.log(wrong)
     console.log(correct)
     global.model.summary()
-
-    //console.log(global.model);
-    //console.log("SONE");
 }
 
 function convertToTensors(data, targets, testsplit){
@@ -89,13 +86,10 @@ function convertToTensors(data, targets, testsplit){
     var feature_count = data_tensor.shape[2]
     var test_split_shape = time_step * feature_count
 
-    console.log(data_tensor.shape[0])
-    console.log("reshaped data")
     var data_reshaped = data_tensor.reshape([sample_count, test_split_shape])
 
     const numTestExamples = Math.round(numExamples * testsplit);
     const numTrainExamples = numExamples - numTestExamples;
-    console.log("Train examples:" + numTrainExamples);
     const xDims = data_reshaped.shape[1] //retrive the new shape for splitting the data
 
     // Create a 1D 'tf.Tensor' to hold the labels, and convert the number label
@@ -104,29 +98,19 @@ function convertToTensors(data, targets, testsplit){
     const encoded_targets = tf.oneHot(tf.tensor1d(targets).toInt(), 3);
 
     // Split the data into training and test sets, using 'slice'.
-    console.log("XTRAIN");
+
     const xTrain_flat = data_reshaped.slice([0, 0], [numTrainExamples, xDims]);
-    xTrain_flat.print(true)
-    console.log("XTest");
     const xTest_flat = data_reshaped.slice([numTrainExamples, 0], [numTestExamples, xDims]);
-    xTest_flat.print(true)
-    console.log("yTRAIN");
     const yTrain = encoded_targets.slice([0, 0], [numTrainExamples, 3]);
-    yTrain.print(true)
-    console.log("yTest");
     const yTest = encoded_targets.slice([numTrainExamples, 0], [numTestExamples, 3]);
     yTest.print(true)
 
     var xTrain = xTrain_flat.reshape([numTrainExamples, time_step, feature_count])
-    console.log(xTrain.shape)
 
     var xTest = xTest_flat.reshape([numTestExamples, time_step, feature_count])
-    console.log(xTest.shape)
 
     var newyTrain = yTrain.asType('float32')
     var newyTest = yTest.asType('float32')
-    console.log(newyTrain.shape)
-    console.log(newyTest.shape)
 
     return [xTrain, newyTrain, xTest, newyTest];
 
@@ -136,8 +120,6 @@ function convertToTensors(data, targets, testsplit){
 async function convert_to_array(db){
 
     let array = db.map(obj => Object.values(obj)); //convert json into an array
-    console.log("From json to array")
-    console.log(array)
 
     let targets = []; //array for storing target values
     const array_no_id = []; //array for accelerometer values
@@ -153,9 +135,6 @@ async function convert_to_array(db){
 
     let number_of_classes = targets.filter(onlyUnique).length //filter out the duplicates from an array to get the number of classes
 
-    console.log("Array with no id")
-    console.log(array_no_id)
-
     return [array_no_id, number_of_classes];
 }
 
@@ -168,9 +147,6 @@ function getData(testsplit, dataset, number_of_classes){
 
         var overlap_ratio = 0
         const overlap = Math.round(window_size * overlap_ratio);
-        console.log(overlap)
-
-        console.log(dataset);
 
         for (let i = 0; i < number_of_classes; i++) { //fill up the arrays with empty arrays amounting to the number of classes
             dataByClass.push([])
@@ -182,7 +158,6 @@ function getData(testsplit, dataset, number_of_classes){
             console.log(scope)
             var states = getColumn(scope, scope[0].length-1)
             var most_occoruring_state = getmode(states)
-            console.log(most_occoruring_state)
             var val_no_target = []
             for (const example of scope) {
                 const data = example.slice(0, example.length - 1)
@@ -197,23 +172,17 @@ function getData(testsplit, dataset, number_of_classes){
             var window_scope = dataset.slice(i-overlap, i+window_size+overlap)
             var states = getColumn(window_scope, window_scope[0].length-1)
             var most_occoruring_state = getmode(states)
-            console.log(most_occoruring_state)
 
             var val_no_target = []
             for (const example of window_scope) {
 
                 const data = example.slice(0, example.length - 1)
-                console.log(data)
-                //console.log(data)
                 val_no_target.push(data)
             }
             dataByClass[most_occoruring_state].push(val_no_target);
             targetsByClass[most_occoruring_state].push(most_occoruring_state);
 
         }
-        console.log("LMAOLMAO")
-        console.log(dataByClass[0])
-        console.log(targetsByClass[0])
 
         //Initialize the arrays for training and testing
         const xTrains = []
@@ -242,16 +211,6 @@ function getData(testsplit, dataset, number_of_classes){
 }
 
 async function trainModel (xTrain, yTrain, xTest, yTest){
-    console.log("Final training tensors")
-    xTrain.print(true)
-    yTrain.print(true)
-    xTest.print(true)
-    yTest.print(true)
-
-    console.log(xTrain.shape)
-    console.log(yTrain.shape)
-    console.log(xTest.shape)
-    console.log(yTest.shape)
 
     global.model = tf.sequential(); //creating an empty architecture for the model
     const learningRate = .001;
@@ -260,26 +219,18 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
 
     const optimizer = tf.train.sgd(learningRate)
 
-    console.log(yTrain.shape)
-    console.log(xTest.shape)
-    console.log(yTest.shape)
 
     global.model.add(tf.layers.lstm({units: 100, inputShape: [15, 3], activation: 'linear', returnsequences: true}))//, returnSequences: true}));
 
     global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
 
-   
     global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
 
-   
     global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
 
-   
     global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
-
     
     global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
-
 
     global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
 
@@ -298,7 +249,6 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
     global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
 
     global.model.add(tf.layers.dense({activation: 'softmax', units: 3}));
-
 
     global.model.compile({ optimizer: optimizer, loss: 'categoricalCrossentropy' , metrics: ['accuracy']}); //compiles the model and prepares for training by adding an optimizer, loos function and metrics
 

@@ -1,5 +1,5 @@
 let cluster = "test1";
-let collection = "test1";
+let collection = "test2";
 const {MongoClient} = require('mongodb');
 var db_key = "mongodb+srv://thesis:s3eFAEHg9ENMr3Yp@koral-02ofn.mongodb.net/test?retryWrites=true&w=majority"; //special key for accessing my db
 var client = new MongoClient(db_key, { useUnifiedTopology: true, useNewUrlParser: true }); //get instance of client
@@ -105,17 +105,13 @@ app.post('/predict', async function (request, response) {
 });
 
 app.get('/train', async function (request, response) {
-    console.log("GOT THE REQUEST");
+
 
     const db = client.db(cluster);
     const test = db.collection(collection);
 
-    console.log("Cursor searching");
     const searchCursor = await test.find()
     const result = await searchCursor.toArray()
-    //To delete
-    console.log("initial array from mongodb")
-    console.log(result)
 
     ml.learn(result);
 

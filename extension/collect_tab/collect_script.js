@@ -90,7 +90,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         document.getElementById("collect_alert").innerText = message.message;
     }
 
-    else if((typeof message.message) === "object") {
+    //else if((typeof message.message) === "object") {
+    else if(message.message.hasOwnProperty('x') === true) {
         document.getElementById("x").innerHTML = message.message.x;
         document.getElementById("y").innerHTML = message.message.y;
         document.getElementById("z").innerHTML = message.message.z;
