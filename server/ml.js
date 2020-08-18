@@ -72,8 +72,8 @@ module.exports.learn = async function (data) {
     console.log(correct)
     global.model.summary()
 
-    console.log(global.model);
-    console.log("SONE");
+    //console.log(global.model);
+    //console.log("SONE");
 }
 
 function convertToTensors(data, targets, testsplit){
@@ -255,18 +255,47 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
 
     global.model = tf.sequential(); //creating an empty architecture for the model
     const learningRate = .001;// was .01
-    const numberofEpochs = 150; //
+    const numberofEpochs = 963; //
     //https://www.youtube.com/watch?v=EoYfa6mYOG4
 
-    const optimizer = tf.train.adam(learningRate) //read on this type of optimizer https://js.tensorflow.org/api/latest/#Training-Optimizers
+    const optimizer = tf.train.sgd(learningRate) //was adam //read on this type of optimizer https://js.tensorflow.org/api/latest/#Training-Optimizers
 
     console.log(yTrain.shape)
     console.log(xTest.shape)
     console.log(yTest.shape)
 
-    global.model.add(tf.layers.lstm({units: 100, inputShape: [15, 3], activation: 'relu', returnsequences: true}))//, returnSequences: true}));
+    global.model.add(tf.layers.lstm({units: 100, inputShape: [15, 3], activation: 'linear', returnsequences: true}))//, returnSequences: true}));
 
-    global.model.add(tf.layers.dense({activation: 'relu', units: 100}));
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+   
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+   
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+   
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+    
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
+
+    global.model.add(tf.layers.dense({activation: 'linear', units: 20}));
 
     global.model.add(tf.layers.dense({activation: 'softmax', units: 3}));
 
@@ -287,6 +316,11 @@ async function trainModel (xTrain, yTrain, xTest, yTest){
 
 //fit is used to train the model with data examples against their target values
     const history = await global.model.fit(xTrain, yTrain, options); //trains a model for a fixed number of epochs
+    console.log(history);
+    const FileSystem = require("fs");
+ FileSystem.writeFile('history.json', JSON.stringify(history), (err) => {
+    console.log("CYCE")
+  });
     training_finished = true;
     await global.model.save('file://./model');
     return global.model

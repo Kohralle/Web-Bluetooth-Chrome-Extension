@@ -1,3 +1,5 @@
+let cluster = "test1";
+let collection = "ultimate";
 const {MongoClient} = require('mongodb');
 var db_key = "mongodb+srv://thesis:s3eFAEHg9ENMr3Yp@koral-02ofn.mongodb.net/test?retryWrites=true&w=majority"; //special key for accessing my db
 var client = new MongoClient(db_key, { useUnifiedTopology: true, useNewUrlParser: true }); //get instance of client
@@ -28,8 +30,8 @@ async function listDatabases(){
 
 //Listing all the collections in a particular DB
 async function listCollections(){
-    const db = client.db("test1");
-    const test = db.collection('test1');
+    const db = client.db(cluster);
+    const test = db.collection(collection);
     console.log("Cursor searching");
     const searchCursor = await test.find()
     const result = await searchCursor.toArray()
@@ -39,8 +41,8 @@ async function listCollections(){
 }
 
 async function clear_database(){
-const db = client.db("test1");
-const test = db.collection('test1');
+const db = client.db(cluster);
+const test = db.collection(collection);
 test.deleteMany({});
 }
 
@@ -66,8 +68,8 @@ async function main(){
 async function send_to_database (value){
     //to console log do value.x
 
-    const db = client.db("test1");
-    const test = db.collection('test1');
+    const db = client.db(cluster);
+    const test = db.collection(collection);
 
     const insertCursor = await test.insertOne(
         {
@@ -105,8 +107,8 @@ app.post('/predict', async function (request, response) {
 app.get('/train', async function (request, response) {
     console.log("GOT THE REQUEST");
 
-    const db = client.db("test1");
-    const test = db.collection('test1');
+    const db = client.db(cluster);
+    const test = db.collection(collection);
 
     console.log("Cursor searching");
     const searchCursor = await test.find()
