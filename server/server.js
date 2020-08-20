@@ -1,5 +1,5 @@
 let cluster = "test1";
-let collection = "ultimate";
+let collection = "user";
 const {MongoClient} = require('mongodb');
 var db_key = "mongodb+srv://thesis:s3eFAEHg9ENMr3Yp@koral-02ofn.mongodb.net/test?retryWrites=true&w=majority"; //special key for accessing my db
 var client = new MongoClient(db_key, { useUnifiedTopology: true, useNewUrlParser: true }); //get instance of client
