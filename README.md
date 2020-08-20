@@ -17,6 +17,10 @@ Then Navigate to the server folder through terminal and do
 
 This will establish a connection to the mongodb database, this will however not connect as you need to ask me to whitelist your IP address on the mongodb website so that you can access the database.
 
+# Collection
+
+The application is set to train on 200 epochs, I recommend collecting 1000-1500 values in equal proportions for good results.
+
 # Extras
 
 In the extras folder, you will find my code used for hyperparameter testing of the model that was deployed in the app for user to load as well as jupyter notebook files for plotting graphs
