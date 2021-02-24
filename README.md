@@ -2,6 +2,10 @@
 
 Experimenting with the capabilities of using Web bluetooth and tensorflow js on a Chrome extension. Using this extension you can train machine learning models on a chrome extension (not natively) to predict machine learning values of an accelerometer to predict movement behavior.
 
+# Thesis + Demo
+
+https://drive.google.com/file/d/1EaebTqjsr5SfgEBdRg-T0TDy3W6Ndl1z/edit
+https://youtu.be/_i8zOcu2s6Y
 
 # Setup
 
@@ -17,11 +21,5 @@ Then Navigate to the server folder through terminal and do
 
 This will establish a connection to the mongodb database, this will however not connect as you need to ask me to whitelist your IP address on the mongodb website so that you can access the database.
 
-# Collection
 
-The application is set to train on 200 epochs, I recommend collecting 1000-1500 values in equal proportions for good results.
-
-# Extras
-
-In the extras folder, you will find my code used for hyperparameter testing of the model that was deployed in the app for user to load as well as jupyter notebook files for plotting graphs
 
